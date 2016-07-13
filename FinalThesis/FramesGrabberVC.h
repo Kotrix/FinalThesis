@@ -37,9 +37,9 @@ public:
 	FramesGrabberVC(const String& videoname)
 	{
 		//check for video/images availability
-		if (videoname.find(".jpg") == string::npos ||
-			videoname.find(".png") == string::npos ||
-			videoname.find(".bmp") == string::npos ||
+		if (videoname.find(".jpg") == string::npos &&
+			videoname.find(".png") == string::npos &&
+			videoname.find(".bmp") == string::npos &&
 			videoname.find(".gif") == string::npos)
 		{
 			if (!mVideoCapture.open(videoname, CAP_FFMPEG))

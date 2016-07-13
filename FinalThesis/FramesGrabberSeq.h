@@ -53,15 +53,36 @@ public:
 
 		//filter only images of one found valid format from directory
 		String formatName = validFormats[formatNum];
+		vector<String> unsorted;
 		for (int i = 0; i < numOfFiles; i++)
 		{
 			if (mFilesList[i].find(formatName) != string::npos)
 			{
-				mSequence.push_back(mFilesList[i]);
+				unsorted.push_back(mFilesList[i]);
 			}
 		}
 
-		mSequenceLength = mSequence.size();
+		mSequenceLength = unsorted.size();
+
+		//sort images according to numbers
+		mSequence = unsorted;
+		for (int i = 0; i < mSequenceLength; i++)
+		{
+			int sample_number = 0;
+			int order = 1;
+			pos = mFilesList[i].find(formatName) - 1;
+			char check = unsorted[i][pos];
+
+			while (check >= '0' && check <= '9')
+			{
+				sample_number += static_cast<int>(check - '0') * order;
+				order *= 10;
+				check = unsorted[i][--pos];
+			}
+
+			mSequence[sample_number] = unsorted[i];
+		}
+
 	}
 
 	/**

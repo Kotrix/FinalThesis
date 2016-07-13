@@ -75,7 +75,6 @@ public:
 
 		mResults.push_back(Point2f(-result.x, -result.y));
 		mError += Point3f(abs(result.x) - abs(mGroundTruth[frameNum - 1].x), abs(result.y) - abs(mGroundTruth[frameNum - 1].y), 0);
-		int i = 8;
 	}
 
 	Mat getPathImg() const

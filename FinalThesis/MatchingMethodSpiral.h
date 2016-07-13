@@ -23,7 +23,7 @@ class MatchingMethodSpiral : public MatchingMethod
 		}
 		else if (metric == NXC)
 		{
-			mPredThresh = 0.8;
+			mPredThresh = 0.7;
 			mPeakThresh = 0.9;
 		}
 		else if (metric == SAD)

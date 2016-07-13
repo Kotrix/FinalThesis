@@ -19,6 +19,8 @@ public:
 
 	Point3f getDisplacement(const Mat& img) override
 	{
+		Mat g1 = img(mTemplateROI).clone();
+		Mat g2 = mTemplate.clone();
 		//calculate map using chosen similarity measure
 		Mat result = getSimilarityMap(img);
 
