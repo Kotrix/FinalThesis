@@ -14,10 +14,11 @@ class Evaluator
 	vector<Point2f> mResults;
 	int mGroundTruthSize;
 	int mScale;
-	Point3f mError;
+	Point3f mAvgError;
+	Point3f mLastError;
 
 public:
-	Evaluator(const String& path) : mGroundTruthSize(0), mError(0), mResults(0)
+	Evaluator(const String& path) : mGroundTruthSize(0), mAvgError(0), mLastError(0), mResults(0)
 	{
 		//get directory name from path
 		size_t pos = path.find_last_of('\\');
@@ -74,7 +75,8 @@ public:
 		if (mGroundTruthSize == 0 || frameNum > mGroundTruthSize || frameNum < 1) return;
 
 		mResults.push_back(Point2f(-result.x, -result.y));
-		mError += Point3f(abs(result.x) - abs(mGroundTruth[frameNum - 1].x), abs(result.y) - abs(mGroundTruth[frameNum - 1].y), 0);
+		mLastError = Point3f(abs(result.x) - abs(mGroundTruth[frameNum - 1].x), abs(result.y) - abs(mGroundTruth[frameNum - 1].y), 0);
+		mAvgError += mLastError;
 	}
 
 	Mat getPathImg() const
@@ -95,9 +97,14 @@ public:
 		return image;
 	}
 
-	Point3f getError() const
+	Point3f getLastError() const
 	{
-		return mError;
+		return mLastError;
+	}
+
+	Point3f getAvgError() const
+	{
+		return mAvgError / mGroundTruthSize;
 	}
 
 };

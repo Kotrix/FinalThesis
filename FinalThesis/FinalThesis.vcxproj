@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FlannMatching.h" />
+    <ClInclude Include="FeatureTracking.h" />
     <ClInclude Include="Evaluator.h" />
     <ClInclude Include="FeaturesMethod.h" />
     <ClInclude Include="FramesGrabber.h" />

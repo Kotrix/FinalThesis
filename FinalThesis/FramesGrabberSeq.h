@@ -65,9 +65,10 @@ public:
 		mSequenceLength = unsorted.size();
 
 		//sort images according to numbers
-		mSequence = unsorted;
+		vector<int> idxs;
 		for (int i = 0; i < mSequenceLength; i++)
 		{
+			//get img number from filename
 			int sample_number = 0;
 			int order = 1;
 			pos = mFilesList[i].find(formatName) - 1;
@@ -80,9 +81,21 @@ public:
 				check = unsorted[i][--pos];
 			}
 
-			mSequence[sample_number] = unsorted[i];
-		}
+			//check if image isn't already in sequence
+			if (find(idxs.begin(), idxs.end(), sample_number) != idxs.end())
+				CV_Error(CV_StsBadArg, "Two images with the same number. Cannot state order");
 
+			idxs.push_back(sample_number);
+		}
+	
+		vector<int> sorted_idxs;
+		cv::sortIdx(idxs, sorted_idxs, SORT_EVERY_ROW | SORT_ASCENDING);
+
+		mSequence = vector<String>(mSequenceLength);
+		for (int i = 0; i < mSequenceLength; i++)
+		{
+			mSequence[i] = unsorted[sorted_idxs[i]];
+		}
 	}
 
 	/**

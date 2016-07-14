@@ -8,25 +8,36 @@ using namespace std;
 
 class FeatureGrid : public Feature2D
 {
-private:
 	int mCountX;
 
 public:
 	FeatureGrid(int count) : Feature2D(), mCountX(count){}
-	
+
 	void detect(InputArray image, vector<KeyPoint>& keypoints, InputArray mask) override
 	{
+		bool useMask = false;
+		Mat maskMat = mask.getMat();
+		if (!maskMat.empty()) useMask = true;
+
 		int countY = cvRound(mCountX * image.cols() / static_cast<double>(image.rows()));
-		keypoints.resize(mCountX * countY);
+		keypoints = vector<KeyPoint>();
 		for (int i = 0, k = 0; i < countY; i++)
 			for (int j = 0; j < mCountX; j++, k++)
 			{
-				keypoints[k].pt.x = (j + 0.5f)*image.cols() / mCountX;
-				keypoints[k].pt.y = (i + 0.5f)*image.rows() / countY;
+				float x = (j + 0.5f)*image.cols() / mCountX;
+				float y = (i + 0.5f)*image.rows() / countY;
+
+				if (useMask)
+				{
+					Point xy(x, y);
+					if (maskMat.at<uchar>(xy) == 0)
+						continue;
+				}
+
+				keypoints.push_back(KeyPoint(x, y, 0));
 			}
 	}
 };
-
 class FeaturesMethod : public Method
 {
 protected:
@@ -34,8 +45,11 @@ protected:
 	Size mPrevSize;
 	Ptr<Feature2D> mDetector;
 	vector<KeyPoint> mPrevKeypoints;
+	Mat mDetectorMask;
 	double mScale;
 	bool mNeedScaling;
+	int mEstimationType; // 0 - allPoints, 1 - RANSAC, 2 - original OpenCV function
+	bool mDrawResult;
 
 	static void getRTMatrix(const vector<Point2f>& a, const vector<Point2f>& b, int count, Mat& M)
 	{
@@ -80,10 +94,9 @@ protected:
 		om[5] = m[3];
 	}
 
-	bool RANSAC(vector<Point2f>& pA, vector<Point2f>& pB) const
+	bool RANSAC(vector<Point2f>& pA, vector<Point2f>& pB, double good_ratio) const
 	{
 		const int RANSAC_MAX_ITERS = 300;
-		const double RANSAC_GOOD_RATIO = 0.5;
 		const int RANSAC_SIZE0 = 3;
 
 		RNG rng(static_cast<uint64>(-1));
@@ -175,7 +188,7 @@ protected:
 					good_idx[good_count++] = i;
 			}
 
-			if (good_count >= count*RANSAC_GOOD_RATIO)
+			if (good_count >= count*good_ratio)
 				break;
 		}
 
@@ -200,9 +213,12 @@ protected:
 public:
 	String mDetectorName;
 
-	FeaturesMethod(const String& name, const Mat& first, const String& detector) : Method(name)
+	FeaturesMethod(const String& name, const Mat& first, const String& detector, int estimation, bool draw) : Method(name), mEstimationType(estimation), mDrawResult(draw)
 	{
 		addToName("_" + detector);
+		if (estimation == 1) addToName("_RANSAC");
+		if (draw) namedWindow("Result", WINDOW_NORMAL);
+
 		first.copyTo(mPrevFrame);
 		mPrevSize = first.size();
 
@@ -221,27 +237,36 @@ public:
 		//create features detector object pointer
 		mDetectorName = detector;
 		if (mDetectorName == "Grid")
-		{
-			mDetector = makePtr<FeatureGrid>(16);
-		}
-		else if (mDetectorName == "GFTT")
-		{
-			mDetector = GFTTDetector::create(mPrevSize.area() / 1024, 0.1, mPrevSize.width / 32);
-		}
+			mDetector = makePtr<FeatureGrid>(18);
+		else if (mDetectorName == "Agast")
+			mDetector = AgastFeatureDetector::create();
+		else if (mDetectorName == "AKAZE")
+			mDetector = AKAZE::create();
+		else if (mDetectorName == "BRISK")
+			mDetector = BRISK::create();
 		else if (mDetectorName == "FAST")
-		{
 			mDetector = FastFeatureDetector::create();
-		}
+		else if (mDetectorName == "GFTT")
+			mDetector = GFTTDetector::create(mPrevSize.area() / 2048, 0.1, mPrevSize.width / 32);
+		else if (mDetectorName == "KAZE")
+			mDetector = KAZE::create();
+		else if (mDetectorName == "MSER")
+			mDetector = MSER::create();
 		else if (mDetectorName == "ORB")
-		{
-			mDetector = ORB::create(200);
-		}
+			mDetector = ORB::create(mPrevSize.area() / 1024);
 		else if (mDetectorName == "SURF")
-		{
-			mDetector = xfeatures2d::SURF::create(23000, 4, 3);
-		}
+			mDetector = xfeatures2d::SURF::create(1500, 4, 3);
+		else if (mDetectorName == "SIFT")
+			mDetector = xfeatures2d::SIFT::create(mPrevSize.area() / 1024);
+		
+
+		//define mask to omit features near border
+		mDetectorMask = Mat::zeros(mPrevSize, mPrevFrame.type());
+		rectangle(mDetectorMask, mPrevSize / 10, mPrevSize * 9 / 10, Scalar(255), CV_FILLED);
 
 		//detect keypoints in first image
-		mDetector->detect(first, mPrevKeypoints);
+		mDetector->detect(first, mPrevKeypoints, mDetectorMask);
 	}
+
+	virtual Mat getTransform(const Mat& img) = 0;
 };

@@ -102,10 +102,10 @@
     <ClInclude Include="Evaluator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FlannMatching.h">
+    <ClInclude Include="OpticalFlow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OpticalFlow.h">
+    <ClInclude Include="FeatureTracking.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
