@@ -1,7 +1,8 @@
 ﻿#pragma once
 #include "Method.h"
 #include <opencv2/xfeatures2d/nonfree.hpp>
-#include "opencv2/video/tracking.hpp"
+#include <opencv2/video/tracking.hpp>
+#include <opencv2/tracking/tracking.hpp>
 
 using namespace std;
 

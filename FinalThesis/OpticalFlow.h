@@ -54,7 +54,7 @@ class OpticalFlow : public FeaturesMethod
 		vector<Point2f> pA(mPrevPoints2f), pB;
 
 		// find the corresponding points in B
-		calcOpticalFlowPyrLK(mPrevFrame, next_img, mPrevPoints2f, pB, status, noArray(), mPrevSize / 19, 4,
+		calcOpticalFlowPyrLK(mPrevFrame, next_img, pA, pB, status, noArray(), mPrevSize / 19, 8,
 			TermCriteria(TermCriteria::MAX_ITER, 40, 0.1));
 
 		// leave only points with optical flow status = true
@@ -103,19 +103,19 @@ public:
 
 	Point3f getDisplacement(const Mat& img) override
 	{
-		Mat result;
+		Mat transform;
 
 		if (mEstimationType == 0)
-			result = estimate(img, false);
+			transform = estimate(img, false);
 		else if (mEstimationType == 1)
-			result = estimate(img, true);
+			transform = estimate(img, true);
 		else if (mEstimationType == 2)
-			result = estimateRigidTransform(mPrevFrame, img, false);
+			transform = estimateRigidTransform(mPrevFrame, img, false);
 
 		img.copyTo(mPrevFrame);
 		updateFeatures(mPrevFrame);
 		if(mDrawPoints) drawPoints();
 
-		return Point3f(result.at<double>(0, 2), result.at<double>(1, 2), 0);
+		return Point3f(transform.at<double>(0, 2), transform.at<double>(1, 2), asin(transform.at<double>(1, 0)) * 180 / CV_PI);
 	}
 };

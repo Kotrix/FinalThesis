@@ -18,10 +18,10 @@ int main()
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen1_05\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen2_1\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen5_1\\*.png";
-	String path = "C:\\Users\\Krzysztof\\Pictures\\realData\\real10mms\\*.png";
+	//String path = "C:\\Users\\Krzysztof\\Pictures\\realData\\real10mms\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen10_2\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen20_0\\*.png";
-	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen40_3\\*.png";
+	String path = "C:\\Users\\Krzysztof\\Pictures\\gen40_3\\*.png";
 
 	Ptr<FramesGrabber> FramesGrabber = FramesGrabberFactory::getFramesGrabber(path);
 	Evaluator evaluator(path);
@@ -34,7 +34,7 @@ int main()
 	//auto Method = MatchingMethodFullFFT(frame, NXC, 0.7, 0.1);
 	//auto Method = MatchingMethodSpiralCache(frame, NXC, 0.7, 0.1);
 	//auto Method = MatchingMethodLRP(frame, NXC, 0.7, 0.1, 3);
-	auto Method = OpticalFlow(frame, "Grid", 0);
+	auto Method = OpticalFlow(frame, "Grid", 2);
 	//auto Method = FlannMatching(frame, "ORB");
 
 	cout << Method.getName() << endl;
