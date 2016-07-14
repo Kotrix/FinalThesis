@@ -253,7 +253,7 @@ public:
 		else if (mDetectorName == "MSER")
 			mDetector = MSER::create();
 		else if (mDetectorName == "ORB")
-			mDetector = ORB::create(mPrevSize.area() / 1024);
+			mDetector = ORB::create(mPrevSize.area() / 512);
 		else if (mDetectorName == "SURF")
 			mDetector = xfeatures2d::SURF::create(1500, 4, 3);
 		else if (mDetectorName == "SIFT")
