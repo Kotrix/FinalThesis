@@ -11,9 +11,10 @@ class Method
 {
 protected:
 	String mMethodName; /**< Method name */
+	bool mDrawResult; /**< Results drawing flag */
 
 public:
-	explicit Method(const String& name) : mMethodName(name) {}
+	explicit Method(const String& name) : mMethodName(name), mDrawResult(false) {}
 
 	virtual ~Method() {}
 
@@ -28,6 +29,11 @@ public:
 	@param segment			segment to add
 	*/
 	void addToName(const String& segment) { mMethodName = mMethodName + segment; }
+
+	/**
+	Switch results drawing on/off
+	*/
+	void drawingOnOff() { mDrawResult = !mDrawResult; }
 
 	/**
 	Virtual function - Run method derived by every child method

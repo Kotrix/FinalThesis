@@ -49,7 +49,6 @@ protected:
 	double mScale;
 	bool mNeedScaling;
 	int mEstimationType; // 0 - allPoints, 1 - RANSAC, 2 - original OpenCV function
-	bool mDrawResult;
 
 	static void getRTMatrix(const vector<Point2f>& a, const vector<Point2f>& b, int count, Mat& M)
 	{
@@ -213,7 +212,7 @@ protected:
 public:
 	String mDetectorName;
 
-	FeaturesMethod(const String& name, const Mat& first, const String& detector, int estimation, bool draw) : Method(name), mEstimationType(estimation), mDrawResult(draw)
+	FeaturesMethod(const String& name, const Mat& first, const String& detector, int estimation, bool draw) : Method(name), mEstimationType(estimation)
 	{
 		addToName("_" + detector);
 		if (estimation == 1) addToName("_RANSAC");

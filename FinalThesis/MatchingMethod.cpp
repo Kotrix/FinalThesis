@@ -1,5 +1,6 @@
 ﻿#include "MatchingMethod.h"
 #include <iostream>
+#include <array>
 
 Point2f MatchingMethod::subPixelWillert(const Mat& corr, Point bestLoc) const
 {
@@ -10,6 +11,26 @@ Point2f MatchingMethod::subPixelWillert(const Mat& corr, Point bestLoc) const
 	const float xp1 = log(corr.at<float>(y, x + 1));
 	const float yp1 = log(corr.at<float>(y + 1, x));
 	const float xm1 = log(corr.at<float>(y, x - 1));
+
+	const float dx = (xm1 - xp1) / (2 * (xm1 - xy2 + xp1));
+	const float dy = (ym1 - yp1) / (2 * (ym1 - xy2 + yp1));
+
+	return Point2f(dx, dy);
+}
+
+Point2f MatchingMethod::subPixelWillert(const Mat& corr) const
+{
+	if (corr.size() != Size(3, 3) || corr.type() != CV_32FC1)
+	{
+		cout << "Cannot calculate sub-pixel accuracy\n";
+		return Point2f(0);
+	}
+	
+	const float xy2 = 2 * log(corr.at<float>(1, 1));
+	const float ym1 = log(corr.at<float>(0, 1));
+	const float xp1 = log(corr.at<float>(1, 2));
+	const float yp1 = log(corr.at<float>(2, 1));
+	const float xm1 = log(corr.at<float>(1, 0));
 
 	const float dx = (xm1 - xp1) / (2 * (xm1 - xy2 + xp1));
 	const float dy = (ym1 - yp1) / (2 * (ym1 - xy2 + yp1));

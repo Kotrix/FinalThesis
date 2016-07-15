@@ -2,7 +2,7 @@
 LSVelocimeter project
 @author Krzysztof Kotowski
 */
-#include "MatchingMethodSpiralCache.h"
+#include "MatchingMethodSpiral.h"
 #include "MatchingMethodLRP.h"
 #include "MatchingMethodFullFFT.h"
 #include "MatchingMethodFullSpatial.h"
@@ -18,9 +18,10 @@ int main()
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen1_05\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen2_1\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen5_1\\*.png";
-	String path = "C:\\Users\\Krzysztof\\Pictures\\realData\\real10mms\\*.png";
+	String path = "C:\\Users\\Krzysztof\\Pictures\\realData\\real5mms\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen10_2\\*.png";
-	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen20_0\\*.png";
+	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen-20_0\\*.png";
+	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen-40_0\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen40_3\\*.png";
 
 	Ptr<FramesGrabber> FramesGrabber = FramesGrabberFactory::getFramesGrabber(path);
@@ -32,10 +33,10 @@ int main()
 	int firstType = frame.type();
 
 	//auto Method = MatchingMethodFullFFT(frame, NXC, 0.7, 0.1);
-	//auto Method = MatchingMethodSpiralCache(frame, NXC, 0.7, 0.1);
+	auto Method = MatchingMethodSpiral(frame, SAD, 0.7, 0.1);
 	//auto Method = MatchingMethodLRP(frame, NXC, 0.7, 0.1, 3);
 	//auto Method = OpticalFlow(frame, "Grid", 1, false);
-	auto Method = FeatureTracking(frame, "ORB", "FlannBased", 1, true);
+	//auto Method = FeatureTracking(frame, "ORB", "FlannBased", 1, true);
 
 	cout << Method.getName() << endl;
 	//namedWindow("Frame", WINDOW_NORMAL);

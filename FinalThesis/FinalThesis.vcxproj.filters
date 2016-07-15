@@ -39,12 +39,6 @@
     <ClInclude Include="MatchingMethodSpiral.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MatchingMethodSpiralBrute.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MatchingMethodSpiralCache.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Method.h">
       <Filter>Header Files</Filter>
     </ClInclude>

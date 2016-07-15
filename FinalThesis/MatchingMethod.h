@@ -20,7 +20,7 @@ protected:
 	Rect mTemplateROI; /**< ROI for template */
 	Rect mSearchROI; /**< ROI for search */
 	Point mMaxTranslation; /**< Max. translation */
-	Mat mTemplate; /**< Previous template area */
+	Mat mTemplate; /**< Previous template image */
 
 	double mTemplateRatio; /**< Ratio of template to image size */
 	double mMaxShift; /**< Max. shift between consecutive frames */
@@ -32,6 +32,7 @@ protected:
 	@return				estimated sub-pixel translation value
 	*/
 	Point2f subPixelWillert(const Mat& corr, Point bestLoc) const;
+	Point2f subPixelWillert(const Mat& corr) const;
 
 public:
 	explicit MatchingMethod(const String& name, const Mat& first, int metric, double tempRatio, double maxShift);

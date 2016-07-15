@@ -34,8 +34,6 @@
     <ClInclude Include="MatchingMethodFullSpatial.h" />
     <ClInclude Include="MatchingMethodLRP.h" />
     <ClInclude Include="MatchingMethodSpiral.h" />
-    <ClInclude Include="MatchingMethodSpiralBrute.h" />
-    <ClInclude Include="MatchingMethodSpiralCache.h" />
     <ClInclude Include="Method.h" />
     <ClInclude Include="MetricCC.h" />
     <ClInclude Include="MetricMAD.h" />
