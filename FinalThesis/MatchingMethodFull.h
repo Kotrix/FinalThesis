@@ -28,7 +28,7 @@ public:
 		Point bestLoc = mMetric->findBestLoc(result);
 
 		//find sub-pixel accuracy
-		Point2f subPix = subPixelWillert(result, bestLoc);
+		Point2f subPix = mSubPixelEstimator->estimate(result, bestLoc);
 
 		//shift to get translation
 		bestLoc = bestLoc - Point(Point2f(floor(result.cols * 0.5f), floor(result.rows * 0.5f)));

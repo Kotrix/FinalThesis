@@ -82,16 +82,19 @@ public:
 	Mat getPathImg() const
 	{
 		Rect rect = boundingRect(mGroundTruth) | boundingRect(mResults);
+		Point2f tl = rect.tl();
 		Mat image = Mat::zeros(rect.size(), CV_8UC3);
 		resize(image, image, Size(), mScale, mScale, INTER_AREA);
 
 		for (int i = 0; i < mGroundTruth.size() - 1; i++)
 		{
-			line(image, mScale * (mGroundTruth[i] - Point2f(rect.tl())), mScale * (mGroundTruth[i + 1] - Point2f(rect.tl())), Scalar(0, 0, 255), mScale);
+			//drawMarker(image, mScale * (mGroundTruth[i] - tl),  Scalar(0, 0, 255), MARKER_DIAMOND, 5);
+			line(image, mScale * (mGroundTruth[i] - tl), mScale * (mGroundTruth[i + 1] - tl), Scalar(0, 0, 255), mScale);
 		}
 		for (int i = 0; i < mResults.size() - 1; i++)
 		{
-			line(image, mScale * (mResults[i] - Point2f(rect.tl())), mScale * (mResults[i + 1] - Point2f(rect.tl())), Scalar(0, 255, 0), mScale);
+			//drawMarker(image, mScale * (mResults[i] - tl), Scalar(0, 255, 0), MARKER_DIAMOND, 5);
+			line(image, mScale * (mResults[i] - tl), mScale * (mResults[i + 1] - tl), Scalar(0, 255, 0), mScale);
 		}
 
 		return image;

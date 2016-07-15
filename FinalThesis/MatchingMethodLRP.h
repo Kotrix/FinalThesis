@@ -66,7 +66,7 @@ public:
 		}
 
 		result = match(pyramid[0](Rect(bestLoc - Point(1, 1), mTemplates[0].size() + Size(2, 2))), mTemplates[0]);
-		Point2f subpix = subPixelWillert(result, Point(1, 1));
+		Point2f subpix = mSubPixelEstimator->estimate(result, Point(1, 1));
 
 		bestLoc += mSearchROI.tl() - mTemplateROI.tl();
 

@@ -17,7 +17,7 @@ public:
 	*/
 	Mat getSimilarityMap(const Mat& img) const override
 	{
-		Mat result = Mat(mSearchROI.size() - mTemplateROI.size() + Size(1, 1), CV_32F, Scalar(0));
+		Mat result(mSearchROI.size() - mTemplateROI.size() + Size(1, 1), CV_32F, Scalar(0));
 		Point startShift = mSearchROI.tl() - mTemplateROI.tl();
 
 		for (int y = 0; y < result.rows; y++)

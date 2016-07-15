@@ -26,6 +26,7 @@
     <ClInclude Include="FramesGrabberFactory.h" />
     <ClInclude Include="FramesGrabberSeq.h" />
     <ClInclude Include="FramesGrabberVC.h" />
+    <ClInclude Include="Gaussian3.h" />
     <ClInclude Include="HigherBetterMetric.h" />
     <ClInclude Include="LowerBetterMetric.h" />
     <ClInclude Include="MatchingMethod.h" />
@@ -46,11 +47,11 @@
     <ClInclude Include="MetricXC.h" />
     <ClInclude Include="OpticalFlow.h" />
     <ClInclude Include="SimilarityMetric.h" />
+    <ClInclude Include="SubPixelEstimator.h" />
+    <ClInclude Include="SubPixelEstimatorsFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MatchingMethod.cpp" />
-    <ClCompile Include="OpticalFlow.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{010639C1-AC4A-4373-8682-D3B7835C6252}</ProjectGuid>

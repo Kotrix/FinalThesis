@@ -19,6 +19,9 @@
     <Filter Include="SimilarityMetrics">
       <UniqueIdentifier>{baad8444-e00c-440c-8771-00a098e471b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SubpixelEstimators">
+      <UniqueIdentifier>{08383054-6da2-4e11-a6f0-3f93fc3abefc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MatchingMethod.h">
@@ -102,15 +105,18 @@
     <ClInclude Include="FeatureTracking.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SubPixelEstimator.h">
+      <Filter>SubpixelEstimators</Filter>
+    </ClInclude>
+    <ClInclude Include="Gaussian3.h">
+      <Filter>SubpixelEstimators</Filter>
+    </ClInclude>
+    <ClInclude Include="SubPixelEstimatorsFactory.h">
+      <Filter>SubpixelEstimators</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MatchingMethod.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OpticalFlow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

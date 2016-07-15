@@ -5,6 +5,7 @@ Spiral search with prediction
 #pragma once
 #include "MatchingMethod.h"
 #include <iostream>
+#include <opencv2/tracking/feature.hpp>
 
 class MatchingMethodSpiral : public MatchingMethod
 {
@@ -18,25 +19,45 @@ class MatchingMethodSpiral : public MatchingMethod
 	//need for adaptive threshold selection algortihm
 	void setThresholds(int metric)
 	{
-		if (metric == SSD)
+		if (metric == CC)
 		{
-			mPredThresh = mTemplateROI.area() * 400;
-			mPeakThresh = mTemplateROI.area() * 300;
+			mPredThresh = mTemplateROI.area() * 500;
+			mPeakThresh = mTemplateROI.area() * 400;
+		}
+		else if (metric == MAD)
+		{
+			mPredThresh = 16;
+			mPeakThresh = 13;
+		}
+		else if (metric == NCC)
+		{
+			mPredThresh = 0.6;
+			mPeakThresh = 0.7;
+		}
+		else if (metric == NSSD)
+		{
+			mPredThresh = 0.4;
+			mPeakThresh = 0.3;
 		}
 		else if (metric == NXC)
 		{
-			mPredThresh = 0.7;
-			mPeakThresh = 0.8;
+			mPredThresh = 0.8;
+			mPeakThresh = 0.9;
 		}
 		else if (metric == SAD)
 		{
 			mPredThresh = mTemplateROI.area() * 16;
 			mPeakThresh = mTemplateROI.area() * 13;
 		}
-		else if (metric == MAD)
+		else if (metric == SSD)
 		{
-			mPredThresh = 16;
-			mPeakThresh = 13;
+			mPredThresh = mTemplateROI.area() * 400;
+			mPeakThresh = mTemplateROI.area() * 300;
+		}
+		else if (metric == XC)
+		{
+			mPredThresh = mTemplateROI.area() * 1525;
+			mPeakThresh = mTemplateROI.area() * 1700;
 		}
 	}
 
@@ -49,18 +70,19 @@ public:
 	explicit MatchingMethodSpiral(const Mat& first, int metric, double templRatio = 0.5, double maxShift = 0.1) : MatchingMethod("SpiralSearch", first, metric, templRatio, maxShift), mPrediction(0)
 	{
 		setThresholds(metric);
-		mVisited = Mat(first.size() - Size(1, 1), CV_32F);
+		mVisited = Mat(Size(mSearchROI.size() - mTemplateROI.size() + Size(1, 1)), CV_32F, Scalar(-1));
 	}
 
 	Point3f getDisplacement(const Mat& img) override
 	{
-		const Point ROItl = mTemplateROI.tl();
+		const Point ROItl = Point(mMaxTranslation);
 
 		//reset cache
 		mVisited = Scalar(-1);
+		int iter = 1; //number of correlations calculated
 
 		//init shift
-		Point shift(0, -13);
+		Point shift(0);
 
 		//check if prediction is good enough to follow
 		float value = mVisited.at<float>(ROItl + mPrediction) = mMetric->calculate(img(mTemplateROI + mPrediction), mTemplate);
@@ -73,6 +95,7 @@ public:
 			else
 			{
 				value = mVisited.at<float>(ROItl + shift) = mMetric->calculate(img(mTemplateROI + shift), mTemplate);
+				iter++;
 			}
 		}
 
@@ -82,17 +105,16 @@ public:
 		int spiralLevel = 1; // actual spiral level
 		int direction = 0; // actual direction of movement from DIRECTIONS vector
 		int status = -2; // -2 if no peak found, -1 if peak found
-		int iter = 0; //number of correlations calculated
 
 		//stop if peak found or mVisited matrix filled
-		while (iter < mMaxTranslation.x * mMaxTranslation.y)
+		while (iter < (mVisited.rows - 1)*(mVisited.cols - 1))
 		{
-			if (!mMetric->isBetter(value, mPeakThresh)) //mode 1: looking for a peak neighbourhood
+			if (!mMetric->isBetter(value, mPeakThresh)) //phase 1: looking for a peak neighbourhood
 			{
 				shift += DIRECTIONS[direction];
 
 				//check if shift is in the image range
-				if (shift.x < mMaxTranslation.x || shift.y < mMaxTranslation.y)
+				if (mVisited.at<float>(ROItl + shift) < 0 && abs(shift.x) <= mMaxTranslation.x && abs(shift.y) <= mMaxTranslation.y)
 				{
 					value = mVisited.at<float>(ROItl + shift) = mMetric->calculate(img(mTemplateROI + shift), mTemplate);
 					iter++; //increase counter
@@ -113,7 +135,7 @@ public:
 					countToLevel = 0;
 				}
 			}
-			else //mode 2: looking for the actual peak
+			else //phase 2: looking for the actual peak
 			{
 				//find maximum value in cross-neighbourhood
 				status = -1;
@@ -121,7 +143,7 @@ public:
 				for (int i = 0; i < 4; i++)
 				{
 					Point nextShift = shift + DIRECTIONS[i];
-					if (mVisited.at<float>(ROItl + nextShift) < 0)
+					if (mVisited.at<float>(ROItl + nextShift) < 0 && abs(nextShift.x) < mMaxTranslation.x && abs(nextShift.y) < mMaxTranslation.y)
 					{
 						double corr = mVisited.at<float>(ROItl + nextShift) = mMetric->calculate(img(mTemplateROI + nextShift), mTemplate);
 						if (mMetric->isBetter(corr, max))
@@ -129,6 +151,7 @@ public:
 							max = corr;
 							status = i;
 						}
+						iter++;
 					}
 				}
 
@@ -141,11 +164,11 @@ public:
 			}
 		}
 
-		if (status == -1)
-		{
-			img(mTemplateROI).copyTo(mTemplate);
-		}
-		else
+		//update template
+		img(mTemplateROI).copyTo(mTemplate);
+
+		//check searching status
+		if (status != -1)
 		{
 			cout << "ERROR: Match hasn't been found" << endl; 
 			return Point3f(0);
@@ -155,7 +178,7 @@ public:
 		mPrediction = shift;
 
 		//find sub-pixel accuracy
-		Point2f subPix = subPixelWillert(mVisited(Rect(ROItl + shift - Point(1,1), Size(3,3))));
+		Point2f subPix = mSubPixelEstimator->estimate(mVisited, ROItl + shift);
 
 		return Point3f(Point2f(shift) + subPix);
 	}

@@ -17,7 +17,7 @@ int main()
 
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen1_05\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen2_1\\*.png";
-	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen5_1\\*.png";
+	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen5_0\\*.png";
 	String path = "C:\\Users\\Krzysztof\\Pictures\\realData\\real5mms\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen10_2\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen-20_0\\*.png";
@@ -33,7 +33,7 @@ int main()
 	int firstType = frame.type();
 
 	//auto Method = MatchingMethodFullFFT(frame, NXC, 0.7, 0.1);
-	auto Method = MatchingMethodSpiral(frame, SAD, 0.7, 0.1);
+	auto Method = MatchingMethodSpiral(frame, NCC, 0.7, 0.1);
 	//auto Method = MatchingMethodLRP(frame, NXC, 0.7, 0.1, 3);
 	//auto Method = OpticalFlow(frame, "Grid", 1, false);
 	//auto Method = FeatureTracking(frame, "ORB", "FlannBased", 1, true);
