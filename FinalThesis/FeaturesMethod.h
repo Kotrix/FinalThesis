@@ -205,6 +205,8 @@ protected:
 				pB[i] = pB[j];
 			}
 		}
+		pA.resize(good_count);
+		pB.resize(good_count);
 
 		return true;
 	}
@@ -212,11 +214,10 @@ protected:
 public:
 	String mDetectorName;
 
-	FeaturesMethod(const String& name, const Mat& first, const String& detector, int estimation, bool draw) : Method(name), mEstimationType(estimation)
+	FeaturesMethod(const String& name, const Mat& first, const String& detector, int estimation) : Method(name), mEstimationType(estimation)
 	{
 		addToName("_" + detector);
 		if (estimation == 1) addToName("_RANSAC");
-		if (draw) namedWindow("Result", WINDOW_NORMAL);
 
 		first.copyTo(mPrevFrame);
 		mPrevSize = first.size();

@@ -2,14 +2,9 @@
 LSVelocimeter project
 @author Krzysztof Kotowski
 */
-#include "SpiralSearch.h"
-#include "LowResolutionPruning.h"
-#include "FullSearchFFT.h"
-#include "FullSearchSpatial.h"
-#include "FramesGrabberFactory.h"
-#include "OpticalFlow.h"
+#include "LaserSpeckleVelocimeter.h"
 #include "Evaluator.h"
-#include "FeatureTracking.h"
+
 
 int main()
 {
@@ -18,63 +13,72 @@ int main()
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen1_05\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen2_1\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen5_0\\*.png";
-	//String path = "C:\\Users\\Krzysztof\\Pictures\\realData\\real5mms\\*.png";
-	String path = "C:\\Users\\Krzysztof\\Pictures\\gen10_2\\*.png";
+	String path = "C:\\Users\\Krzysztof\\Pictures\\realData\\real10mms\\*.png";
+	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen10_2\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen-20_0\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen-40_0\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen40_3\\*.png";
 
-	Ptr<FramesGrabber> FramesGrabber = FramesGrabberFactory::getFramesGrabber(path);
+	MethodParams params;
+	params.metric = NXC;
+	params.templRatio = 0.7;
+	params.maxShift = 0.1;
+	params.layers = 3;
+	params.detector = "Grid";
+	params.estimation = 1;
+	params.matcher = "FlannBased";
+
+	LaserSpeckleVelocimeter LSV(path, FLOW, params, 1.0, false);
+
 	Evaluator evaluator(path);
 
-	Mat frame;
-	if (!FramesGrabber->acquire(frame)) return EXIT_FAILURE;
-	Size firstSize = frame.size();
-	int firstType = frame.type();
+	double sumTime = 0;
+	Point2f sumVelocity(0);
+	uint64 frameNumber = 0;
 
-	auto Method = FullSearchSpatial(frame, NXC, 0.7, 0.1);
-	//auto Method = SpiralSearch(frame, NCC, 0.7, 0.1);
-	//auto Method = LowResolutionPruning(frame, NXC, 0.7, 0.1, 3);
-	//auto Method = OpticalFlow(frame, "Grid", 1, false);
-	//auto Method = FeatureTracking(frame, "ORB", "FlannBased", 1, true);
-
-	cout << Method.getName() << endl;
-	//namedWindow("Frame", WINDOW_NORMAL);
-
-	Point3f translation = Point3f(0);
-	double time, avg_time = 0;
-	int frameNumber = 1;
-
+	namedWindow("Frame", WINDOW_NORMAL);
 	for (;;)
 	{
-		if (!FramesGrabber->acquire(frame)) break;
+		Mat frame;
+		if (!LSV.nextMeasurement(frame)) break;
 
-		if (frame.size() != firstSize)
-			CV_Error(Error::StsUnmatchedSizes, "Consecutive images must have the same size");
+		auto V = LSV.getVelocity();
+		auto displacement = LSV.getDisplacement();
+		frameNumber = LSV.getFrameNumber();
+		auto time = LSV.getTime();
 
-		if (frame.type() != firstType)
-			CV_Error(Error::StsUnmatchedFormats, "Consecutive images must have the same data type");
+		//accumulate results
+		if (frameNumber > 1)
+		{
+			sumTime += time;
+			sumVelocity += V;
+		}
 
-		//start timer
-		time = static_cast<double>(getTickCount());
+		evaluator.evaluate(displacement, frameNumber);
 
-		translation += Method.getDisplacement(frame);
+		//display result
+		cout << frameNumber << ". calculated in " << 1000 * time << "ms\n"
+			<< "Translation: ( " << displacement.x << ", " << displacement.y << " )px | Velocity: " << V.x << " px/s\n";
+		if (V.y > 0) cout << "Rotation: " << displacement.z << " deg  |  Velocity: " << V.y << " deg/s\n";
+		cout << endl;
 
-		//stop timer
-		time = (static_cast<double>(getTickCount()) - time) / getTickFrequency();
-		if(frameNumber > 1) avg_time += time;
-
-		evaluator.evaluate(translation, frameNumber);
-		//imshow("Frame", frame);
-		cout << frameNumber++ << ". " << translation << " time: " << 1000 * time << "ms\n";
-		
+		imshow("Frame", frame);
 		if (waitKey(1) != -1) break;
 	}
+ 
+	sumVelocity /= (frameNumber - 1.0);
+	sumTime /= (frameNumber - 1.0);
+	cout << endl << "Average velocity: " << sumVelocity.x << " px/s  |  " << sumVelocity.y << " deg/s\n";
 
-	cout << endl << "Error: " << evaluator.getLastError() << endl;
-	cout << "Avg. time: " << 1000 * avg_time / frameNumber << "ms\n";
-	namedWindow("path", WINDOW_NORMAL);
-	imshow("path", evaluator.getPathImg());
+	bool evaluate = true;
+	if (evaluate)
+	{
+		cout << "Error: " << evaluator.getLastError() << endl;
+		cout << "Avg. time: " << 1000 * sumTime << " ms\n";
+		namedWindow("Error", WINDOW_NORMAL);
+		imshow("Error", evaluator.getPathImg());
+	}
 	waitKey();
+
 	return EXIT_SUCCESS;
 }

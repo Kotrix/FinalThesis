@@ -29,7 +29,7 @@ class FeatureTracking : public FeaturesMethod
 		mMatcher->match(mPrevDescriptors, descriptors, matches);
 
 		//calculate min distance between keypoints
-		double min_dist = 100.0;
+		double min_dist = 120.0;
 		if (mMatcherName != "ORB") 
 		{
 			for (int i = 0; i < mPrevDescriptors.rows; i++)
@@ -58,7 +58,7 @@ class FeatureTracking : public FeaturesMethod
 			            good_matches, result, Scalar::all(-1), Scalar::all(-1),
 			            vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
 
-			imshow("Result", result);
+			imshow(mResultWindow, result);
 		}
 
 		//calculate transformation matrix
@@ -77,7 +77,7 @@ class FeatureTracking : public FeaturesMethod
 			if (!result) cout << "RANSAC failed!" << endl;
 		}
 
-		getRTMatrix(pA, pB, good_matches.size(), M);
+		getRTMatrix(pA, pB, pA.size(), M);
 
 		//copy keypoints and descriptors
 		mPrevKeypoints = keypoints;
@@ -97,11 +97,13 @@ class FeatureTracking : public FeaturesMethod
 	Mat mPrevDescriptors;
 
 public:
-	FeatureTracking(const Mat& first, const String& detector, const String& matcher, int estimation, bool draw) : FeaturesMethod("FeatureTracking", first, detector, estimation, draw)
+	FeatureTracking(const Mat& first, const String& detector, const String& matcher, int estimation) : FeaturesMethod("FeatureTracking", first, detector, estimation)
 	{
 		mMatcherName = matcher;
 		addToName("_" + mMatcherName);
 		mMatcher = DescriptorMatcher::create(mMatcherName);
+
+		CV_Assert(mDetector->descriptorSize() > 0);
 
 		mDetector->compute(first, mPrevKeypoints, mPrevDescriptors);
 		if (mMatcherName == "FlannBased" && mPrevDescriptors.type() != CV_32F) {

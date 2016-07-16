@@ -12,7 +12,7 @@
 class MetricsFactory
 {
 public:
-   static SimilarityMetric* getMetric(int type){
+   static Ptr<SimilarityMetric> getMetric(int type){
 	  
 	   switch (type)
 	   {

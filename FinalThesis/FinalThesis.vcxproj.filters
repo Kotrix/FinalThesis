@@ -114,6 +114,12 @@
     <ClInclude Include="FullSearchSpatial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LaserSpeckleVelocimeter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MethodsFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

@@ -5,7 +5,6 @@
 
 class FramesGrabberSeq : public FramesGrabber
 {
-	int mFrameNumber = 0;
 	vector<String> mSequence;
 	int mSequenceLength;
 
@@ -15,7 +14,7 @@ public:
 	Open given image sequence
 	@param pattern		path pattern of sequence using * as wildcard
 	*/
-	FramesGrabberSeq(const String& pattern)
+	FramesGrabberSeq(const String& pattern) : FramesGrabber()
 	{
 		//get directory name from path
 		size_t pos = pattern.find_last_of('\\');
@@ -31,7 +30,7 @@ public:
 		if (mFilesList.empty()) CV_Error(CV_StsBadArg, "No images in folder\n");
 
 		//find first image of valid format in directory
-		int numOfFiles = mFilesList.size();
+		size_t numOfFiles = mFilesList.size();
 		vector<String> validFormats = { ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".tiff" };
 		int formatNum = -1;
 		for (int i = 0; i < numOfFiles; i++)
@@ -62,7 +61,7 @@ public:
 			}
 		}
 
-		mSequenceLength = unsorted.size();
+		mSequenceLength = static_cast<int>(unsorted.size());
 
 		//sort images according to numbers
 		vector<int> idxs;
@@ -111,7 +110,19 @@ public:
 		if (mFrameNumber < mSequenceLength)
 		{
 			frame = imread(mSequence[mFrameNumber++], IMREAD_GRAYSCALE);
-			return true;
+			if (mFrameNumber == 1)
+			{
+				setSize(frame.size());
+				setType(frame.type());
+				return true;
+			}
+
+			if (frame.size() == mSize && frame.type() == mType)
+				return true;
+			if (frame.size() != mSize)
+				CV_Error(Error::StsUnmatchedSizes, "Consecutive images must have the same size");
+			if (frame.type() != mType)
+				CV_Error(Error::StsUnmatchedFormats, "Consecutive images must have the same data type");
 		}
 
 		cout << "End of sequence. Press any key\n";

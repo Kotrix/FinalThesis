@@ -81,8 +81,8 @@ private:
 
 	
 protected:
-	SimilarityMetric* mMetric; /**< Object of metric to use */
-	SubPixelEstimator* mSubPixelEstimator; /**< Object for sub-pixel accuracy estimation */
+	Ptr<SimilarityMetric> mMetric; /**< Object of metric to use */
+	Ptr<SubPixelEstimator> mSubPixelEstimator; /**< Object for sub-pixel accuracy estimation */
 	Rect mTemplateROI; /**< ROI for template */
 	Rect mSearchROI; /**< ROI for search */
 	Point mMaxTranslation; /**< Max. translation */
@@ -100,10 +100,6 @@ public:
 		initMatching(first);
 	}
 
-	~MatchingMethod()
-	{
-		delete mMetric;
-		delete mSubPixelEstimator;
-	}
+	~MatchingMethod(){}
 
 };

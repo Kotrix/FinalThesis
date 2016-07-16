@@ -164,6 +164,8 @@ public:
 			}
 		}
 
+		if (mDrawResult) imshow(mResultWindow, mCache);
+
 		//update template
 		img(mTemplateROI).copyTo(mTemplate);
 

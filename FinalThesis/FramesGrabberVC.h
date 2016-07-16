@@ -15,7 +15,7 @@ public:
 	Open given camera
 	@param cam_id			id of camera to open
 	*/
-	FramesGrabberVC(int cam_id)
+	FramesGrabberVC(int cam_id) : FramesGrabber()
 	{
 		//check for camera availaibilty
 		if (!mVideoCapture.open(cam_id))
@@ -26,7 +26,7 @@ public:
 		{
 			mSourceType = "Camera";
 			cout << "FramesGrabberVC: " << mSourceType << " ready\n";
-			mFPS = mVideoCapture.get(CAP_PROP_FPS);
+			mFPS = -1;
 		}
 	}
 
@@ -34,7 +34,7 @@ public:
 	Open given videofile or images sequence
 	@param videoname		path of videofile to open
 	*/
-	FramesGrabberVC(const String& videoname)
+	FramesGrabberVC(const String& videoname) : FramesGrabber()
 	{
 		//check for video/images availability
 		if (videoname.find(".jpg") == string::npos &&
@@ -78,9 +78,20 @@ public:
 			return false;
 		}
 
-		//convert for simplicity
-		if (frame.channels() != 1) cvtColor(frame, frame, CV_RGB2GRAY);
+		if (frame.type() != CV_8UC1) cvtColor(frame, frame, CV_BGR2GRAY);
 
-		return true;
+		mFrameNumber++;
+		if (mFrameNumber == 1)
+		{
+			setSize(frame.size());
+			return true;
+		}
+
+		if (frame.size() != mSize)
+			CV_Error(Error::StsUnmatchedSizes, "Consecutive images must have the same size");
+		else
+			return true;
+
+		return false;
 	}
 };

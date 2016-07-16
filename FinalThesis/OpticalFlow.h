@@ -34,7 +34,7 @@ class OpticalFlow : public FeaturesMethod
 		{
 			circle(draw, mPrevPoints2f[i], mPrevSize.width / 100, Scalar(0, 0, 255), 2);
 		}
-		imshow("Result", draw);
+		imshow(mResultWindow, draw);
 	}
 
 	Mat getTransform(const Mat& img) override
@@ -76,7 +76,7 @@ class OpticalFlow : public FeaturesMethod
 			if (!result) cout << "RANSAC failed!" << endl;
 		}
 
-		getRTMatrix(pA, pB, count, M);
+		getRTMatrix(pA, pB, pA.size(), M);
 
 		if (mNeedScaling)
 		{
@@ -89,7 +89,7 @@ class OpticalFlow : public FeaturesMethod
 
 
 public:
-	OpticalFlow(const Mat& first, const String& detector, int estimation = 0, bool draw = false) : FeaturesMethod("OpticalFlow", first, detector, estimation, draw)
+	OpticalFlow(const Mat& first, const String& detector, int estimation = 0) : FeaturesMethod("OpticalFlow", first, detector, estimation)
 	{
 		//only 8-bit 1-channel supported
 		if (first.type() != CV_8UC1)

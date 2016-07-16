@@ -9,6 +9,8 @@ class FullSearch : public MatchingMethod
 protected:
 	Point3f findTranslation(const Mat& result) const
 	{
+		if (mDrawResult) imshow(mResultWindow, result);
+
 		//find maximum/minimum value
 		Point bestLoc = mMetric->findBestLoc(result);
 

@@ -7,15 +7,15 @@ class FramesGrabberFactory
 
 public:
 
-	static cv::Ptr<FramesGrabber> getFramesGrabber(int cam_id)
+	static Ptr<FramesGrabber> getFramesGrabber(int cam_id)
 	{
 		return new FramesGrabberVC(cam_id);
 	}
 
-	static cv::Ptr<FramesGrabber> getFramesGrabber(const cv::String& filename)
+	static Ptr<FramesGrabber> getFramesGrabber(const String& filename)
 	{
 		//search for wildcard in filename
-		if (filename.find('*') != std::string::npos)
+		if (filename.find('*') != string::npos)
 		{
 			return new FramesGrabberSeq(filename);
 		}

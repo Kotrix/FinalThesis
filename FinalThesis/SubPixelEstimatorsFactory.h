@@ -5,7 +5,7 @@
 class SubPixelEstimatorsFactory
 {
 public:
-	static SubPixelEstimator* getEstimator(int type){
+	static Ptr<SubPixelEstimator> getEstimator(int type){
 
 		switch (type)
 		{
