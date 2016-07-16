@@ -8,7 +8,7 @@
 
 struct MethodParams
 {
-	int metric = SAD;
+	int metric = NXC;
 	double templRatio = 0.7;
 	double maxShift = 0.1;
 	int layers = 3;

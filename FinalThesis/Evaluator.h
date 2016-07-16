@@ -18,7 +18,7 @@ class Evaluator
 	Point3f mLastError;
 
 public:
-	Evaluator(const String& path) : mGroundTruthSize(0), mAvgError(0), mLastError(0), mResults(0)
+	Evaluator(const String& path) : mResults(0), mGroundTruthSize(0), mAvgError(0), mLastError(0)
 	{
 		//get directory name from path
 		size_t pos = path.find_last_of('\\');

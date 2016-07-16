@@ -23,20 +23,18 @@ class LaserSpeckleVelocimeter
 		mMethod = MethodsFactory::getMethod(method, first, params);
 
 		//display results for debugging
-		cout << mMethod->getName() << endl;
+		cout << "Method: " << mMethod->getName() << endl;
 		if (draw) mMethod->drawingOnOff();
 	}
 
 public:
-	LaserSpeckleVelocimeter(const String& path, int method, MethodParams params, double px2mm, bool draw = false) : PX2MM(px2mm)
+	explicit LaserSpeckleVelocimeter(const String& path, int method, MethodParams params, double px2mm = 1.0, bool draw = false) : PX2MM(px2mm)
 	{
-		mFramesGrabber = FramesGrabberFactory::getFramesGrabber(path);
-		initMethod(method, params, draw);
-	}
+		if (path == "0") 
+			mFramesGrabber = FramesGrabberFactory::getFramesGrabber(0);
+		else
+			mFramesGrabber = FramesGrabberFactory::getFramesGrabber(path);
 
-	LaserSpeckleVelocimeter(int cam_id, int method, MethodParams params, double px2mm, bool draw = false) : PX2MM(px2mm)
-	{
-		mFramesGrabber = FramesGrabberFactory::getFramesGrabber(cam_id);
 		initMethod(method, params, draw);
 	}
 
