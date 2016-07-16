@@ -30,11 +30,11 @@
     <ClInclude Include="HigherBetterMetric.h" />
     <ClInclude Include="LowerBetterMetric.h" />
     <ClInclude Include="MatchingMethod.h" />
-    <ClInclude Include="MatchingMethodFull.h" />
-    <ClInclude Include="MatchingMethodFullFFT.h" />
-    <ClInclude Include="MatchingMethodFullSpatial.h" />
-    <ClInclude Include="MatchingMethodLRP.h" />
-    <ClInclude Include="MatchingMethodSpiral.h" />
+    <ClInclude Include="FullSearch.h" />
+    <ClInclude Include="FullSearchFFT.h" />
+    <ClInclude Include="FullSearchSpatial.h" />
+    <ClInclude Include="LowResolutionPruning.h" />
+    <ClInclude Include="SpiralSearch.h" />
     <ClInclude Include="Method.h" />
     <ClInclude Include="MetricCC.h" />
     <ClInclude Include="MetricMAD.h" />

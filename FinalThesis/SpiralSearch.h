@@ -7,7 +7,7 @@ Spiral search with prediction
 #include <iostream>
 #include <opencv2/tracking/feature.hpp>
 
-class MatchingMethodSpiral : public MatchingMethod
+class SpiralSearch : public MatchingMethod
 {
 	//directions of template movement
 	const Point UP = Point(0, -1);
@@ -64,13 +64,13 @@ class MatchingMethodSpiral : public MatchingMethod
 	Point mPrediction;
 	double mPredThresh;
 	double mPeakThresh;
-	Mat mVisited;
+	Mat mCache;
 
 public:
-	explicit MatchingMethodSpiral(const Mat& first, int metric, double templRatio = 0.5, double maxShift = 0.1) : MatchingMethod("SpiralSearch", first, metric, templRatio, maxShift), mPrediction(0)
+	explicit SpiralSearch(const Mat& first, int metric, double templRatio = 0.5, double maxShift = 0.1) : MatchingMethod("SpiralSearch", first, metric, templRatio, maxShift), mPrediction(0)
 	{
 		setThresholds(metric);
-		mVisited = Mat(Size(mSearchROI.size() - mTemplateROI.size() + Size(1, 1)), CV_32F, Scalar(-1));
+		mCache = Mat(Size(mSearchROI.size() - mTemplateROI.size() + Size(1, 1)), CV_32F, Scalar(-1));
 	}
 
 	Point3f getDisplacement(const Mat& img) override
@@ -78,14 +78,14 @@ public:
 		const Point ROItl = Point(mMaxTranslation);
 
 		//reset cache
-		mVisited = Scalar(-1);
-		int iter = 1; //number of correlations calculated
+		mCache = Scalar(-1);
 
 		//init shift
 		Point shift(0);
 
 		//check if prediction is good enough to follow
-		float value = mVisited.at<float>(ROItl + mPrediction) = mMetric->calculate(img(mTemplateROI + mPrediction), mTemplate);
+		float value = mCache.at<float>(ROItl + mPrediction) = mMetric->calculate(img(mTemplateROI + mPrediction), mTemplate);
+		int iter = 1; //number of correlations calculated
 		if (mPrediction != shift)
 		{
 			if (mMetric->isBetter(value, mPredThresh))
@@ -94,7 +94,7 @@ public:
 			}
 			else
 			{
-				value = mVisited.at<float>(ROItl + shift) = mMetric->calculate(img(mTemplateROI + shift), mTemplate);
+				value = mCache.at<float>(ROItl + shift) = mMetric->calculate(img(mTemplateROI + shift), mTemplate);
 				iter++;
 			}
 		}
@@ -106,17 +106,17 @@ public:
 		int direction = 0; // actual direction of movement from DIRECTIONS vector
 		int status = -2; // -2 if no peak found, -1 if peak found
 
-		//stop if peak found or mVisited matrix filled
-		while (iter < (mVisited.rows - 1)*(mVisited.cols - 1))
+		//stop if peak found or mCache matrix filled
+		while (iter < (mCache.rows - 1)*(mCache.cols - 1))
 		{
 			if (!mMetric->isBetter(value, mPeakThresh)) //phase 1: looking for a peak neighbourhood
 			{
 				shift += DIRECTIONS[direction];
 
 				//check if shift is in the image range
-				if (mVisited.at<float>(ROItl + shift) < 0 && abs(shift.x) <= mMaxTranslation.x && abs(shift.y) <= mMaxTranslation.y)
+				if (mCache.at<float>(ROItl + shift) < 0 && abs(shift.x) <= mMaxTranslation.x && abs(shift.y) <= mMaxTranslation.y)
 				{
-					value = mVisited.at<float>(ROItl + shift) = mMetric->calculate(img(mTemplateROI + shift), mTemplate);
+					value = mCache.at<float>(ROItl + shift) = mMetric->calculate(img(mTemplateROI + shift), mTemplate);
 					iter++; //increase counter
 				}
 
@@ -143,9 +143,9 @@ public:
 				for (int i = 0; i < 4; i++)
 				{
 					Point nextShift = shift + DIRECTIONS[i];
-					if (mVisited.at<float>(ROItl + nextShift) < 0 && abs(nextShift.x) < mMaxTranslation.x && abs(nextShift.y) < mMaxTranslation.y)
+					if (mCache.at<float>(ROItl + nextShift) < 0 && abs(nextShift.x) < mMaxTranslation.x && abs(nextShift.y) < mMaxTranslation.y)
 					{
-						double corr = mVisited.at<float>(ROItl + nextShift) = mMetric->calculate(img(mTemplateROI + nextShift), mTemplate);
+						double corr = mCache.at<float>(ROItl + nextShift) = mMetric->calculate(img(mTemplateROI + nextShift), mTemplate);
 						if (mMetric->isBetter(corr, max))
 						{
 							max = corr;
@@ -178,7 +178,7 @@ public:
 		mPrediction = shift;
 
 		//find sub-pixel accuracy
-		Point2f subPix = mSubPixelEstimator->estimate(mVisited, ROItl + shift);
+		Point2f subPix = mSubPixelEstimator->estimate(mCache, ROItl + shift);
 
 		return Point3f(Point2f(shift) + subPix);
 	}

@@ -27,21 +27,6 @@
     <ClInclude Include="MatchingMethod.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MatchingMethodFull.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MatchingMethodFullFFT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MatchingMethodFullSpatial.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MatchingMethodLRP.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MatchingMethodSpiral.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Method.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -113,6 +98,21 @@
     </ClInclude>
     <ClInclude Include="SubPixelEstimatorsFactory.h">
       <Filter>SubpixelEstimators</Filter>
+    </ClInclude>
+    <ClInclude Include="SpiralSearch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LowResolutionPruning.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FullSearch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FullSearchFFT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FullSearchSpatial.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
