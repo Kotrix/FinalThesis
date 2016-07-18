@@ -9,9 +9,13 @@ int main(int argc, char** argv)
 {
 	cout << "Speckle velocimetry - Krzysztof Kotowski\n";
 
+	int method = FULL_FFT;
+	bool draw = false;
+	double px2mm = 1.0;
+
 	MethodParams params;
 	params.metric = NXC;
-	params.templRatio = 0.7;
+	params.templRatio = 0.6;
 	params.maxShift = 0.1;
 	params.layers = 3;
 	params.detector = "Grid";
@@ -21,23 +25,23 @@ int main(int argc, char** argv)
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen1_05\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen2_1\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen5_0\\*.png";
-	String path = "C:\\Users\\Krzysztof\\Pictures\\realData\\real10mms\\*.png";
+	//String path = "C:\\Users\\Krzysztof\\Pictures\\realData\\real5mms\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen10_2\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen-20_0\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen-40_0\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen40_3\\*.png";
+	String path = "0";
 
 	/**
 	* CHECK ARGUMENTS
 	*
 	*/
-	if (argc < 2)
+	if (argc < 11)
 	{
 		cout << "Usage : %s <source> <method> (<metric> <templRatio> <maxShift> <layers> <detector> <estimation> <matcher> <draw> <px2mm>)\n", argv[0];
-		return EXIT_FAILURE;
 	}
 	
-	int method = FULL_FFT;
+	if (argc > 1) path = argv[1];
 	if (argc > 2) method = stoi(argv[2]);
 	if (argc > 3) params.metric = stoi(argv[3]);
 	if (argc > 4) params.templRatio = stod(argv[4]);
@@ -46,15 +50,11 @@ int main(int argc, char** argv)
 	if (argc > 7) params.detector = argv[7];
 	if (argc > 8) params.estimation = stoi(argv[8]);
 	if (argc > 9) params.matcher = argv[9];
-	bool draw = false;
 	if (argc > 10) draw = stoi(argv[10]);
-	double px2mm = 1.0;
 	if (argc > 11) px2mm = stod(argv[11]);
 	String px_mm = "px";
 	if (px2mm > 1.0 + DBL_EPSILON && px2mm < 1.0 - DBL_EPSILON)
 		px_mm = "mm";
-
-	path = argv[1];
 
 	LaserSpeckleVelocimeter LSV(path, method, params, px2mm, draw);
 	bool evaluate = true;
@@ -62,7 +62,8 @@ int main(int argc, char** argv)
 	if (path == "0")
 		evaluate = false;
 
-	Evaluator evaluator(path);
+	Evaluator evaluator;
+	if (evaluate) evaluator = Evaluator(path);
 
 	double sumTime = 0;
 	Point2f sumVelocity(0);
@@ -100,7 +101,11 @@ int main(int argc, char** argv)
 		cout << endl;
 
 		imshow("Frame", frame);
-		if (draw) imshow("Method", LSV.getMethodResult());
+		if (draw)
+		{
+			imshow("Method", LSV.getResultImg());
+			waitKey();
+		}
 		if (waitKey(1) != -1) break;
 	}
  

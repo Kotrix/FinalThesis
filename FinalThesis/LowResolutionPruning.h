@@ -6,10 +6,14 @@
 class LowResolutionPruning : public MatchingMethod
 {
 	int mLayers; /**< Number of pyramid layers */
-	double mPyrRatio;
-	vector<Mat> mPyramid;
-	vector<Mat> mTemplates;
+	double mPyrRatio; /**< Ratio between consecutive pyramid layers */
+	vector<Mat> mPyramid; /**< Search area image pyramid */
+	vector<Mat> mTemplates; /**< Template area image pyramid */
 
+	/**
+	Generate pyramid of search area
+	@param img			input image
+	*/
 	void updatePyramid(const Mat& img)
 	{
 		Mat searchROI = img(mSearchROI);
@@ -25,6 +29,10 @@ class LowResolutionPruning : public MatchingMethod
 		}
 	}
 
+	/**
+	Generate pyramid of template area
+	@param img			input image
+	*/
 	void updateTemplates(const Mat& img)
 	{
 		Mat templROI = img(mTemplateROI);
@@ -58,13 +66,23 @@ public:
 
 	~LowResolutionPruning(){}
 
-	Point3f getDisplacement(const Mat& img) override
+	/**
+	Get displacement with sub-pixel accuracy using low resolution pruning with pyramids
+	@param frame		next frame
+	@return				displacement with respect to previous frame
+	*/
+	Point3f getDisplacement(const Mat& frame) override
 	{
-		updatePyramid(img);
+		updatePyramid(frame);
 
 		//find approximation on the lowest level of pyramid
 		Mat result = mMetric->getMapSpatial(mPyramid[mLayers], mTemplates[mLayers]);
 		Point bestLoc = mMetric->findBestLoc(result);
+
+		if (mDrawResult)
+		{
+			result.copyTo(mResultImg);
+		}
 
 		//coarse to fine
 		for (int i = mLayers - 1; i >= 0; i--)
@@ -84,7 +102,7 @@ public:
 		//shift to get displacement
 		bestLoc += mSearchROI.tl() - mTemplateROI.tl();
 
-		updateTemplates(img);
+		updateTemplates(frame);
 
 		return Point3f(bestLoc) + Point3f(subpix);
 	}

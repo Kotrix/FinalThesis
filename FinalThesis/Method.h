@@ -9,11 +9,14 @@ Basis class for all methods
 using namespace cv;
 
 //enum for easier method selection
-enum method
+enum METHODS
 {
 	FULL_FFT, FULL_SPATIAL, LRP, SPIRAL, FLOW, FEATURE_MATCHING
 };
 
+/**
+Base class for every method in the system.
+*/
 class Method
 {
 	String mMethodName; /**< Method name */
@@ -51,10 +54,10 @@ public:
 	Mat getResultImg() const { return mResultImg;  }
 
 	/**
-	Virtual function - Run method derived by every child method
-	This method updates mDisplacement and mTime fields
+	Virtual method derived by every inherited class. 
+	Get displacement with sub-pixel accuracy
 	@param img			next frame
-	@return				false if error
+	@return				displacement with respect to previous frame
 	*/
 	virtual Point3f getDisplacement(const Mat& img) = 0;
 };

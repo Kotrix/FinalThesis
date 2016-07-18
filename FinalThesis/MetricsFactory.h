@@ -12,6 +12,11 @@
 class MetricsFactory
 {
 public:
+	/**
+	Create and return pointer to specified SimilarityMetric object 
+	@param type				number of metric to use (see METRICS enum)
+	@return					smart OpenCV pointer to initialized SimilarityMetric object
+	*/
    static Ptr<SimilarityMetric> getMetric(int type){
 	  
 	   switch (type)

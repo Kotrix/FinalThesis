@@ -7,6 +7,11 @@ Full search method
 class FullSearch : public MatchingMethod
 {
 protected:
+	/**
+	Find translation with sub-pixel accuracy and optionally draw result to mResultImg field
+	@param map			similarity map
+	@return				translation
+	*/
 	Point3f getBestLoc(const Mat& map) const
 	{
 		if (mDrawResult) map.copyTo(mResultImg);

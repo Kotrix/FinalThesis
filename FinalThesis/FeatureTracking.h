@@ -1,8 +1,20 @@
 #pragma once
 #include "FeaturesMethod.h"
 
+/**
+Feature tracking with descriptors matching using FLANN and Brute force algorithms
+*/
 class FeatureTracking : public FeaturesMethod
 {
+	Ptr<DescriptorMatcher> mMatcher; /**< Pointer to descriptor matcher object */
+	String mMatcherName; /**< Matcher name */
+	Mat mPrevDescriptors; /**< Previously calculated descriptors */
+
+	/**
+	Find rigid transformation matrix for the next frame
+	@param frame		next frame
+	@return				transformation matrix
+	*/
 	Mat getTransform(const Mat& img) override
 	{
 		Mat M(2, 3, CV_64F), next_img = img;
@@ -87,10 +99,6 @@ class FeatureTracking : public FeaturesMethod
 		return M;
 	}
 
-	Ptr<DescriptorMatcher> mMatcher;
-	String mMatcherName;
-	Mat mPrevDescriptors;
-
 public:
 	FeatureTracking(const Mat& first, const String& detector, const String& matcher, int estimation) : FeaturesMethod("FeatureTracking", first, detector, estimation)
 	{
@@ -106,6 +114,11 @@ public:
 		}
 	}
 
+	/**
+	Get displacement with sub-pixel accuracy using descriptors matching
+	@param frame		next frame
+	@return				displacement with respect to previous frame
+	*/
 	Point3f getDisplacement(const Mat& img) override
 	{
 		Mat transform = getTransform(img);

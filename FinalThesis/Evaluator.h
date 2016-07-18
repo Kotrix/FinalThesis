@@ -18,6 +18,8 @@ class Evaluator
 	Point3f mLastError;
 
 public:
+	Evaluator() : mGroundTruth(), mResults(0), mGroundTruthSize(0), mScale(0), mAvgError(0), mLastError(0){}
+
 	Evaluator(const String& path) : mResults(0), mGroundTruthSize(0), mAvgError(0), mLastError(0)
 	{
 		//get directory name from path

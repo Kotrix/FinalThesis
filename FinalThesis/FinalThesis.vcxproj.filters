@@ -123,11 +123,11 @@
     <ClInclude Include="FeatureTracking.h">
       <Filter>FeaturesMethods</Filter>
     </ClInclude>
-    <ClInclude Include="OpticalFlow.h">
-      <Filter>FeaturesMethods</Filter>
-    </ClInclude>
     <ClInclude Include="Gaussian3plus.h">
       <Filter>SubpixelEstimators</Filter>
+    </ClInclude>
+    <ClInclude Include="SparseOpticalFlow.h">
+      <Filter>FeaturesMethods</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

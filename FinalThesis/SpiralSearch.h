@@ -16,7 +16,11 @@ class SpiralSearch : public MatchingMethod
 	const Point LEFT = Point(-1, 0);
 	const vector<Point> DIRECTIONS = vector<Point>{ UP, RIGHT, DOWN, LEFT };
 
-	//need for adaptive threshold selection algortihm
+	/**
+	Set constant thresholds for peak finding process.
+	TODO Adaptive algorithm for defining thresholds
+	@param metric				metric number
+	*/
 	void setThresholds(int metric)
 	{
 		if (metric == CC)
@@ -73,6 +77,11 @@ public:
 		mCache = Mat(Size(mSearchROI.size() - mTemplateROI.size() + Size(1, 1)), CV_32F, Scalar(-1));
 	}
 
+	/**
+	Get displacement with sub-pixel accuracy using spiral search
+	@param frame		next frame
+	@return				displacement with respect to previous frame
+	*/
 	Point3f getDisplacement(const Mat& img) override
 	{
 		const Point ROItl = Point(mMaxTranslation);

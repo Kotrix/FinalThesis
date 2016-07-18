@@ -3,27 +3,51 @@
 #include <opencv2/imgproc.hpp>
 
 //enum for easier similarity metric selection
-enum metric
+enum METRICS
 {
 	SSD, NSSD, XC, NXC, CC, NCC, SAD, MAD
 };
 
 class SimilarityMetric
 {
-private:
-	String mName;
-	int mType;
-	Mat mSimilarityMap;
+	String mName; /**< Metric name */
+	int mType; /**< Method number according to METRICS enum */
+	Mat mSimilarityMap; /**< Container for similarity map in memory (avoid reallocation) */
 
 public:
 
 	SimilarityMetric(const String& name, int type) : mName(name), mType(type), mSimilarityMap() {}
 	virtual ~SimilarityMetric() {}
 
+	/**
+	Calculate similarity value for two images of the same size
+	@param img			image
+	@param temp			template
+	@return				similarity value
+	*/
 	virtual double calculate(const Mat& img, const Mat& temp) const = 0;
+
+	/**
+	Find the best match in the similarity map
+	@param map			similarity map
+	@return				location of the best match in the map
+	*/
 	virtual Point findBestLoc(const Mat& map) const = 0;
+
+	/**
+	Check if the first value means better similarity than the second value
+	@param val			the first value
+	@param thresh		the second value
+	@return				true - if is better / false - otherwise
+	*/
 	virtual bool isBetter(double val, double thresh) const = 0;
 
+	/**
+	Get similarity map using spatial domain matching
+	@param img			whole image
+	@param temp			template (not larger than image)
+	@return				reference to calculated similarity map
+	*/
 	Mat& getMapSpatial(const Mat& img, const Mat& temp)
 	{
 		//init similarity map only if needed
@@ -41,12 +65,25 @@ public:
 		return mSimilarityMap;
 	}
 
+	/**
+	Get similarity map using frequency domain matching
+	@param img			whole image
+	@param temp			template (not larger than image)
+	@return				reference to calculated similarity map
+	*/
 	Mat& getMapFreq(const Mat& img, const Mat& temp)
 	{
 		matchTemplate(img, temp, mSimilarityMap, mType);
 		return mSimilarityMap;
 	}
 
+	/**
+	Get metric name
+	*/
 	const String& getName() const { return mName; }
+
+	/**
+	Get metric number from METRICS enum
+	*/
 	int getType() const { return mType; }
 };

@@ -13,13 +13,18 @@ public:
 		CV_Assert(metric < 6);
 	}
 
-	Point3f getDisplacement(const Mat& img) override
+	/**
+	Get displacement with sub-pixel accuracy using full search in frequency domain
+	@param frame		next frame
+	@return				displacement with respect to previous frame
+	*/
+	Point3f getDisplacement(const Mat& frame) override
 	{
 		//calculate map using chosen similarity measure
-		Mat result = mMetric->getMapFreq(img(mSearchROI), mTemplate);
+		Mat result = mMetric->getMapFreq(frame(mSearchROI), mTemplate);
 
 		//copy frame to template
-		img(mTemplateROI).copyTo(mTemplate);
+		frame(mTemplateROI).copyTo(mTemplate);
 
 		return getBestLoc(result);
 	}

@@ -9,16 +9,23 @@ Basis class for all template matching methods
 
 using namespace std;
 
+/**
+Base class for area-based template matching methods
+*/
 class MatchingMethod : public Method
 {
 	/**
 	Check settings and initialize matching method basing on the first frame from source 
-	@param first			first frame in sequence
+	@param first			first frame form the source
 	*/
 	void initMatching(const Mat& first)
 	{
 		int width = first.cols;
 		int height = first.rows;
+
+		//check if image large enough
+		CV_Assert(width > 63);
+		CV_Assert(height > 63);
 
 		checkMaxShift(width, height);
 		checkTemplateRatio();
@@ -44,12 +51,13 @@ class MatchingMethod : public Method
 		first(mTemplateROI).copyTo(mTemplate);
 	}
 
+	/**
+	Check if maximum shift value is in correct range 
+	@param width			width of the image
+	@param height			height of the image
+	*/
 	void checkMaxShift(int width, int height)
 	{
-		//check if image large enough
-		CV_Assert(width > 63);
-		CV_Assert(height > 63);
-
 		//assure that maxShift is sufficient to compute sub-pixel estimation
 		double min = cv::min(mMaxShift*width, mMaxShift*height);
 		if (mSubPixelEstimator->getType() == GAUSS3)
@@ -66,6 +74,9 @@ class MatchingMethod : public Method
 		}
 	}
 
+	/**
+	Check if template ratio value is in correct range
+	*/
 	void checkTemplateRatio()
 	{
 		//check ratio and optionally limit to minimum/maximum 

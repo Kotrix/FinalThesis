@@ -105,6 +105,11 @@ public:
 		mSequence.clear();
 	}
 
+	/**
+	Open given videofile or images sequence
+	@param frame		reference to container for next frame
+	@return				acquisition status (false - acquisition stopped / true - acquisition in progress)
+	*/
 	bool acquire(Mat& output) override
 	{
 		if (mFrameNumber < mSequenceLength)

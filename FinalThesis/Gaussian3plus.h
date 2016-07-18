@@ -4,6 +4,12 @@
 class Gaussian3plus : public SubPixelEstimator
 {
 public:
+	/**
+	Calculate sub-pixel accuracy using 3-point Gaussian estimation with systematic error cancellation function
+	@param map			correlation image
+	@param bestLoc		peak with pixel accuracy
+	@return				estimated sub-pixel translation value
+	*/
 	Point2f estimate(const Mat& corr, Point bestLoc) const override
 	{
 		const int y = bestLoc.y;
@@ -30,11 +36,20 @@ public:
 		return Point2f(dx, dy);
 	}
 
+	/**
+	Get estimator id number from ESTIMATOR_TYPE enum
+	@return				sub-pixel estimator number
+	*/
 	int getType() const override
 	{
 		return GAUSS3;
 	}
 
+	/**
+	Get number of pixels from neighbourhood needed to calculate sub-pixel estimation.
+	Margin N means (2N + 1) x (2N + 1) neighbourhood
+	@return				margin value in pixels
+	*/
 	int getMargin() const override
 	{
 		return 1;

@@ -1,10 +1,18 @@
 ﻿#pragma once
 #include "FeaturesMethod.h"
 
-class OpticalFlow : public FeaturesMethod
+/**
+Class for sparse optical flow
+*/
+class SparseOpticalFlow : public FeaturesMethod
 {
-	vector<Point2f> mPrevPoints2f;
+	vector<Point2f> mPrevPoints2f; /**< Previously detected points */
+	int mLayers; /**< Number of layers in optical flow algorithm */
 
+	/**
+	Calculate and update features vector
+	@param img			input image
+	*/
 	void updateFeatures(const Mat& img)
 	{
 		//detect keypoints in image
@@ -24,6 +32,9 @@ class OpticalFlow : public FeaturesMethod
 		}*/
 	}
 
+	/**
+	Draw features to mResultImg field
+	*/
 	void drawPoints()
 	{
 		mPrevFrame.copyTo(mResultImg);
@@ -34,6 +45,11 @@ class OpticalFlow : public FeaturesMethod
 		}
 	}
 
+	/**
+	Find rigid transformation matrix for the next frame
+	@param frame		next frame
+	@return				transformation matrix
+	*/
 	Mat getTransform(const Mat& img) override
 	{
 		Mat M(2, 3, CV_64F), next_img = img;
@@ -48,7 +64,7 @@ class OpticalFlow : public FeaturesMethod
 		vector<Point2f> pA(mPrevPoints2f), pB;
 
 		// find the corresponding points in B
-		calcOpticalFlowPyrLK(mPrevFrame, next_img, pA, pB, status, noArray(), mPrevSize / 19, 4,
+		calcOpticalFlowPyrLK(mPrevFrame, next_img, pA, pB, status, noArray(), mPrevSize / 19, mLayers,
 			TermCriteria(TermCriteria::MAX_ITER, 40, 0.01));
 
 		// leave only points with optical flow status = true
@@ -86,7 +102,7 @@ class OpticalFlow : public FeaturesMethod
 
 
 public:
-	OpticalFlow(const Mat& first, const String& detector, int estimation = 0) : FeaturesMethod("OpticalFlow", first, detector, estimation)
+	SparseOpticalFlow(const Mat& first, const String& detector, int estimation = 0, int layers = 4) : FeaturesMethod("OpticalFlow", first, detector, estimation), mLayers(layers)
 	{
 		//only 8-bit 1-channel supported
 		if (first.type() != CV_8UC1)
@@ -97,6 +113,11 @@ public:
 		if (estimation == 2) addToName("_OpenCV");
 	}
 
+	/**
+	Get displacement with sub-pixel accuracy using optical flow algorithm
+	@param frame		next frame
+	@return				displacement with respect to previous frame
+	*/
 	Point3f getDisplacement(const Mat& img) override
 	{
 		Mat transform;

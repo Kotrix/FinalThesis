@@ -70,24 +70,29 @@ public:
 		mVidCap.release();
 	}
 
-	bool acquire(Mat& frame) override
+	/**
+	Open given videofile or images sequence
+	@param frame		reference to container for next frame
+	@return				acquisition status (false - acquisition stopped / true - acquisition in progress)
+	*/
+	bool acquire(Mat& output) override
 	{
-		if (!mVidCap.read(frame))
+		if (!mVidCap.read(output))
 		{
 			cout << mSourceType << " stopped. Press any key\n";
 			return false;
 		}
 
-		if (frame.type() != CV_8UC1) cvtColor(frame, frame, CV_BGR2GRAY);
+		if (output.type() != CV_8UC1) cvtColor(output, output, CV_BGR2GRAY);
 
 		mFrameNumber++;
 		if (mFrameNumber == 1)
 		{
-			setSize(frame.size());
+			setSize(output.size());
 			return true;
 		}
 
-		if (frame.size() != mSize)
+		if (output.size() != mSize)
 			CV_Error(Error::StsUnmatchedSizes, "Consecutive images must have the same size");
 		else
 			return true;

@@ -48,7 +48,7 @@
     <ClInclude Include="MetricsFactory.h" />
     <ClInclude Include="MetricSSD.h" />
     <ClInclude Include="MetricXC.h" />
-    <ClInclude Include="OpticalFlow.h" />
+    <ClInclude Include="SparseOpticalFlow.h" />
     <ClInclude Include="SimilarityMetric.h" />
     <ClInclude Include="SubPixelEstimator.h" />
     <ClInclude Include="SubPixelEstimatorsFactory.h" />

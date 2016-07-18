@@ -6,6 +6,10 @@
 
 using namespace std;
 
+/**
+Class derived from OpenCV Feature2D
+Instead of detecting features it only creates a constant grid of points
+*/
 class FeaturesGrid : public Feature2D
 {
 	int mCountX;
@@ -39,20 +43,35 @@ public:
 	}
 };
 
+/**
+	Base class for algorithms using features
+*/
 class FeaturesMethod : public Method
 {
 protected:
-	Mat mPrevFrame;
-	Size mPrevSize;
-	Ptr<Feature2D> mDetector;
-	vector<KeyPoint> mPrevKeypoints;
-	Mat mDetectorMask;
-	double mScale;
-	bool mNeedScaling;
-	int mEstimationType; // 0 - allPoints, 1 - RANSAC, 2 - original OpenCV function
+	Mat mPrevFrame; /**< Previous frame */
+	Size mPrevSize; /**< Size of previous frame */
+	Ptr<Feature2D> mDetector; /**< Pointer to detector/descriptor object */
+	vector<KeyPoint> mPrevKeypoints; /**< Previously detected keypoints */
+	Mat mDetectorMask; /**< Mask for features detection */
+	double mScale; /**< Scaling factor for smaller images */
+	bool mNeedScaling; /**< Flag controlling scaling */
+	int mEstimationType; /**< 0 - allPoints, 1 - RANSAC, 2 - original OpenCV function */
 
-	virtual Mat getTransform(const Mat& img) = 0;
+	/**
+	Find rigid transformation matrix for the next frame
+	@param frame		next frame
+	@return				transformation matrix
+	*/
+	virtual Mat getTransform(const Mat& frame) = 0;
 
+	/**
+	Calculate matrix of rigid transformation (translation, rotation and scale)
+	@param a			points from descriptor
+	@param b			resulting points from tracker
+	@param count		number of points in a and b
+	@param M			output container for transformation matrix
+	*/
 	static void getRTMatrix(const vector<Point2f>& a, const vector<Point2f>& b, int count, Mat& M)
 	{
 		CV_Assert(M.isContinuous());
@@ -96,6 +115,13 @@ protected:
 		om[5] = m[3];
 	}
 
+	/**
+	Random sample consensus algorithm to discard wrongly tracked points
+	@param pA			points from descriptor
+	@param pB			resulting points from tracker
+	@param good_ratio	minimum ratio of good points in set to accept result
+	@return				true - if success / false - if fail
+	*/
 	bool RANSAC(vector<Point2f>& pA, vector<Point2f>& pB, double good_ratio) const
 	{
 		const int RANSAC_MAX_ITERS = 300;
@@ -215,8 +241,6 @@ protected:
 	}
 
 public:
-	//String mDetectorName;
-
 	FeaturesMethod(const String& name, const Mat& first, const String& detector, int estimation) : Method(name), mEstimationType(estimation)
 	{
 		addToName("_" + detector);

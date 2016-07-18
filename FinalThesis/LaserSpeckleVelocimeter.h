@@ -5,16 +5,26 @@
 using namespace std;
 using namespace cv;
 
+/**
+Laser Speckle Velocimeter
+Main interface of the system.
+*/
 class LaserSpeckleVelocimeter
 {
-	Ptr<FramesGrabber> mFramesGrabber;
-	Ptr<Method> mMethod;
-	Point3f mDisplacement{ 0 };
-	Point2f mVelocity{ 0 };
-	double mTime = 0;
-	uint64 mFrameNumber = 0;
-	double PX2MM;
+	Ptr<FramesGrabber> mFramesGrabber; /**< Pointer to frames grabber object */
+	Ptr<Method> mMethod; /**< Pointer to method object */
+	Point3f mDisplacement{ 0 }; /**< Total displacement counter */
+	Point2f mVelocity{ 0 }; /**< Velocity of last displacement  */
+	double mTime = 0; /**< Calculation time of last displacement */
+	uint64 mFrameNumber = 0; /**< Actual frame number */
+	double PX2MM; /**< Calibration matrix */
 
+	/**
+	Initialize method
+	@param method			method number from METHODS enum
+	@param params			method parameters from MethodParams struct
+	@param draw				flag controlling results drawing
+	*/
 	void initMethod(int method, MethodParams params, bool draw)
 	{
 		Mat first;
@@ -38,22 +48,54 @@ public:
 		initMethod(method, params, draw);
 	}
 
+	/**
+	Get measured displacement
+	@return				measured displacement
+	*/
 	Point3f getDisplacement() const { return mDisplacement; }
+
+	/**
+	Get measured velocity
+	@return				measured velocity
+	*/
 	Point2f getVelocity() const { return mVelocity; }
-	Mat getMethodResult() const { return mMethod->getResultImg(); }
+
+	/**
+	Get result image
+	@return				Mat with result
+	*/
+	Mat getResultImg() const { return mMethod->getResultImg(); }
+
+	/**
+	Get processing time for last frame
+	@return				processing time in seconds
+	*/
 	double getTime() const { return mTime; }
+
+	/**
+	Get actual frame number
+	@return				frame number
+	*/
 	uint64 getFrameNumber() const { return mFrameNumber; }
 
-	bool nextMeasurement(Mat& output)
+	/**
+	Main method of the project. It activates complete process of measuring translation with given method in the next frame.
+	The actual frame can be accessed by argument (otherwise put noArray()) 
+	It returns boolean status of acquisition as a control output for user interface
+	@param output		actual frame
+	@return				status of acquisition, true - if acquisition in progress / false - if acquisition has ended
+	*/
+	bool nextMeasurement(OutputArray output)
 	{
 		//start timer
 		mTime = static_cast<double>(getTickCount());
 
-		if (!mFramesGrabber->acquire(output)) return false;
+		Mat frame;
+		if (!mFramesGrabber->acquire(frame)) return false;
 		mFrameNumber++;
 
 		//measure next displacement
-		Point3f measurement = mMethod->getDisplacement(output);
+		Point3f measurement = mMethod->getDisplacement(frame);
 
 		//increase total displacement
 		mDisplacement += Point3f(measurement.x * PX2MM, measurement.y * PX2MM, measurement.z);
@@ -66,6 +108,8 @@ public:
 		if (FPS < 0) FPS = 1.0 / mTime;
 		mVelocity.x = sqrt(measurement.x * measurement.x + measurement.y * measurement.y) * FPS * PX2MM;
 		mVelocity.y = abs(measurement.z) * FPS;
+
+		if (output.needed()) frame.copyTo(output);
 
 		return true;
 	}
