@@ -18,7 +18,7 @@ public:
 		//copy frame to template
 		img(mTemplateROI).copyTo(mTemplate);
 
-		return findTranslation(result);
+		return getBestLoc(result);
 	}
 
 };

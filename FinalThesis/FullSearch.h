@@ -7,15 +7,15 @@ Full search method
 class FullSearch : public MatchingMethod
 {
 protected:
-	Point3f findTranslation(const Mat& result) const
+	Point3f getBestLoc(const Mat& map) const
 	{
-		if (mDrawResult) imshow(mResultWindow, result);
+		if (mDrawResult) map.copyTo(mResultImg);
 
 		//find maximum/minimum value
-		Point bestLoc = mMetric->findBestLoc(result);
+		Point bestLoc = mMetric->findBestLoc(map);
 
 		//find sub-pixel accuracy
-		Point2f subPix = mSubPixelEstimator->estimate(result, bestLoc);
+		Point2f subPix = mSubPixelEstimator->estimate(map, bestLoc);
 
 		//shift to get proper translation
 		bestLoc += mSearchROI.tl() - mTemplateROI.tl();

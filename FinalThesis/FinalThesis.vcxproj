@@ -25,8 +25,9 @@
     <ClInclude Include="FramesGrabber.h" />
     <ClInclude Include="FramesGrabberFactory.h" />
     <ClInclude Include="FramesGrabberSeq.h" />
-    <ClInclude Include="FramesGrabberVC.h" />
+    <ClInclude Include="FramesGrabberCV.h" />
     <ClInclude Include="Gaussian3.h" />
+    <ClInclude Include="Gaussian3plus.h" />
     <ClInclude Include="HigherBetterMetric.h" />
     <ClInclude Include="LaserSpeckleVelocimeter.h" />
     <ClInclude Include="LowerBetterMetric.h" />

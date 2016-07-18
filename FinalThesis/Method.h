@@ -16,10 +16,11 @@ enum method
 
 class Method
 {
-protected:
 	String mMethodName; /**< Method name */
+
+protected:
 	bool mDrawResult; /**< Results drawing flag */
-	String mResultWindow; /**< Result window name */
+	Mat mResultImg; /**< Method resulting image */
 
 	/**
 	Add segment to method name
@@ -28,7 +29,7 @@ protected:
 	void addToName(const String& segment) { mMethodName = mMethodName + segment; }
 
 public:
-	explicit Method(const String& name) : mMethodName(name), mDrawResult(false), mResultWindow("Result") {}
+	explicit Method(const String& name) : mMethodName(name), mDrawResult(false), mResultImg() {}
 
 	virtual ~Method() {}
 
@@ -41,14 +42,13 @@ public:
 	/**
 	Switch results drawing on/off
 	*/
-	void drawingOnOff()
-	{
-		mDrawResult = !mDrawResult;
-		if (mDrawResult)
-			namedWindow(mResultWindow, WINDOW_NORMAL);
-		else
-			destroyWindow(mResultWindow);
-	}
+	void drawingOnOff() { mDrawResult = !mDrawResult; }
+
+	/**
+	Get result image
+	@return				Mat with result
+	*/
+	Mat getResultImg() const { return mResultImg;  }
 
 	/**
 	Virtual function - Run method derived by every child method

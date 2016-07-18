@@ -11,7 +11,10 @@ using namespace std;
 
 class MatchingMethod : public Method
 {
-private:
+	/**
+	Check settings and initialize matching method basing on the first frame from source 
+	@param first			first frame in sequence
+	*/
 	void initMatching(const Mat& first)
 	{
 		int width = first.cols;
@@ -21,7 +24,7 @@ private:
 		checkTemplateRatio();
 
 		//calculate ROI for template
-		double borderRatio = (1.0 - mTemplateRatio) * 0.5;
+		double borderRatio = (1.0 - mTemplRatio) * 0.5;
 		Point tl = Point(floor(width * borderRatio), floor(height * borderRatio));
 		Point br = Point(ceil(width * (1.0 - borderRatio)), ceil(height * (1.0 - borderRatio)));
 		mTemplateROI = Rect(tl, br);
@@ -67,18 +70,20 @@ private:
 	{
 		//check ratio and optionally limit to minimum/maximum 
 		double minRatio = 0.1, maxRatio = 1.0 - 2 * mMaxShift;
-		if (mTemplateRatio < minRatio)
+		if (mTemplRatio < minRatio)
 		{
 			cout << "Too small template. Automatically increased to " << minRatio * 100 << "%\n";
-			mTemplateRatio = minRatio;
+			mTemplRatio = minRatio;
 		}
-		else if (mTemplateRatio > maxRatio)
+		else if (mTemplRatio > maxRatio)
 		{
 			cout << "Too large template. Automatically limited to " << maxRatio * 100 << "%\n";
-			mTemplateRatio = maxRatio;
+			mTemplRatio = maxRatio;
 		}
 	}
 
+	double mTemplRatio; /**< Ratio of template to image size */
+	double mMaxShift; /**< Max. shift between consecutive frames */
 	
 protected:
 	Ptr<SimilarityMetric> mMetric; /**< Object of metric to use */
@@ -88,11 +93,8 @@ protected:
 	Point mMaxTranslation; /**< Max. translation */
 	Mat mTemplate; /**< Previous template image */
 
-	double mTemplateRatio; /**< Ratio of template to image size */
-	double mMaxShift; /**< Max. shift between consecutive frames */
-
 public:
-	explicit MatchingMethod(const String& name, const Mat& first, int metric, double tempRatio, double maxShift) : Method(name), mTemplateRatio(tempRatio), mMaxShift(maxShift)
+	explicit MatchingMethod(const String& name, const Mat& first, int metric, double tempRatio, double maxShift) : Method(name), mTemplRatio(tempRatio), mMaxShift(maxShift)
 	{
 		mMetric = MetricsFactory::getMetric(metric);
 		mSubPixelEstimator = SubPixelEstimatorsFactory::getEstimator(GAUSS3);

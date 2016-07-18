@@ -6,12 +6,12 @@
 
 using namespace std;
 
-class FeatureGrid : public Feature2D
+class FeaturesGrid : public Feature2D
 {
 	int mCountX;
 
 public:
-	FeatureGrid(int count) : Feature2D(), mCountX(count){}
+	FeaturesGrid(int count) : Feature2D(), mCountX(count){}
 
 	void detect(InputArray image, vector<KeyPoint>& keypoints, InputArray mask) override
 	{
@@ -38,6 +38,7 @@ public:
 			}
 	}
 };
+
 class FeaturesMethod : public Method
 {
 protected:
@@ -49,6 +50,8 @@ protected:
 	double mScale;
 	bool mNeedScaling;
 	int mEstimationType; // 0 - allPoints, 1 - RANSAC, 2 - original OpenCV function
+
+	virtual Mat getTransform(const Mat& img) = 0;
 
 	static void getRTMatrix(const vector<Point2f>& a, const vector<Point2f>& b, int count, Mat& M)
 	{
@@ -212,7 +215,7 @@ protected:
 	}
 
 public:
-	String mDetectorName;
+	//String mDetectorName;
 
 	FeaturesMethod(const String& name, const Mat& first, const String& detector, int estimation) : Method(name), mEstimationType(estimation)
 	{
@@ -235,28 +238,27 @@ public:
 		}
 
 		//create features detector object pointer
-		mDetectorName = detector;
-		if (mDetectorName == "Grid")
-			mDetector = makePtr<FeatureGrid>(18);
-		else if (mDetectorName == "Agast")
+		if (detector == "Grid")
+			mDetector = makePtr<FeaturesGrid>(18);
+		else if (detector == "Agast")
 			mDetector = AgastFeatureDetector::create();
-		else if (mDetectorName == "AKAZE")
+		else if (detector == "AKAZE")
 			mDetector = AKAZE::create();
-		else if (mDetectorName == "BRISK")
+		else if (detector == "BRISK")
 			mDetector = BRISK::create();
-		else if (mDetectorName == "FAST")
+		else if (detector == "FAST")
 			mDetector = FastFeatureDetector::create();
-		else if (mDetectorName == "GFTT")
+		else if (detector == "GFTT")
 			mDetector = GFTTDetector::create(mPrevSize.area() / 2048, 0.1, mPrevSize.width / 32);
-		else if (mDetectorName == "KAZE")
+		else if (detector == "KAZE")
 			mDetector = KAZE::create();
-		else if (mDetectorName == "MSER")
+		else if (detector == "MSER")
 			mDetector = MSER::create();
-		else if (mDetectorName == "ORB")
+		else if (detector == "ORB")
 			mDetector = ORB::create(mPrevSize.area() / 512);
-		else if (mDetectorName == "SURF")
+		else if (detector == "SURF")
 			mDetector = xfeatures2d::SURF::create(1500, 4, 3);
-		else if (mDetectorName == "SIFT")
+		else if (detector == "SIFT")
 			mDetector = xfeatures2d::SIFT::create(mPrevSize.area() / 1024);
 		
 
@@ -267,6 +269,4 @@ public:
 		//detect keypoints in first image
 		mDetector->detect(first, mPrevKeypoints, mDetectorMask);
 	}
-
-	virtual Mat getTransform(const Mat& img) = 0;
 };

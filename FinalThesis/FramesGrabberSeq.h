@@ -105,23 +105,23 @@ public:
 		mSequence.clear();
 	}
 
-	bool acquire(Mat& frame) override
+	bool acquire(Mat& output) override
 	{
 		if (mFrameNumber < mSequenceLength)
 		{
-			frame = imread(mSequence[mFrameNumber++], IMREAD_GRAYSCALE);
+			output = imread(mSequence[mFrameNumber++], IMREAD_GRAYSCALE);
 			if (mFrameNumber == 1)
 			{
-				setSize(frame.size());
-				setType(frame.type());
+				setSize(output.size());
+				setType(output.type());
 				return true;
 			}
 
-			if (frame.size() == mSize && frame.type() == mType)
+			if (output.size() == mSize && output.type() == mType)
 				return true;
-			if (frame.size() != mSize)
+			if (output.size() != mSize)
 				CV_Error(Error::StsUnmatchedSizes, "Consecutive images must have the same size");
-			if (frame.type() != mType)
+			if (output.type() != mType)
 				CV_Error(Error::StsUnmatchedFormats, "Consecutive images must have the same data type");
 		}
 

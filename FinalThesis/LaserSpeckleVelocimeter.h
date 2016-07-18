@@ -40,19 +40,20 @@ public:
 
 	Point3f getDisplacement() const { return mDisplacement; }
 	Point2f getVelocity() const { return mVelocity; }
+	Mat getMethodResult() const { return mMethod->getResultImg(); }
 	double getTime() const { return mTime; }
 	uint64 getFrameNumber() const { return mFrameNumber; }
 
-	bool nextMeasurement(Mat& frame)
+	bool nextMeasurement(Mat& output)
 	{
 		//start timer
 		mTime = static_cast<double>(getTickCount());
 
-		if (!mFramesGrabber->acquire(frame)) return false;
+		if (!mFramesGrabber->acquire(output)) return false;
 		mFrameNumber++;
 
 		//measure next displacement
-		Point3f measurement = mMethod->getDisplacement(frame);
+		Point3f measurement = mMethod->getDisplacement(output);
 
 		//increase total displacement
 		mDisplacement += Point3f(measurement.x * PX2MM, measurement.y * PX2MM, measurement.z);

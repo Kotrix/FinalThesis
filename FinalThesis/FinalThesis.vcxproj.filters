@@ -22,16 +22,16 @@
     <Filter Include="SubpixelEstimators">
       <UniqueIdentifier>{08383054-6da2-4e11-a6f0-3f93fc3abefc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MatchingMethods">
+      <UniqueIdentifier>{f9c207e0-9489-4ef2-b64f-ac335772347f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FeaturesMethods">
+      <UniqueIdentifier>{85d294e5-ea41-4963-b2bd-dacb159af392}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MatchingMethod.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Method.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FramesGrabberVC.h">
-      <Filter>FramesGrabber</Filter>
     </ClInclude>
     <ClInclude Include="FramesGrabberSeq.h">
       <Filter>FramesGrabber</Filter>
@@ -78,16 +78,7 @@
     <ClInclude Include="SimilarityMetric.h">
       <Filter>SimilarityMetrics</Filter>
     </ClInclude>
-    <ClInclude Include="FeaturesMethod.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Evaluator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpticalFlow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FeatureTracking.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SubPixelEstimator.h">
@@ -99,26 +90,44 @@
     <ClInclude Include="SubPixelEstimatorsFactory.h">
       <Filter>SubpixelEstimators</Filter>
     </ClInclude>
-    <ClInclude Include="SpiralSearch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LowResolutionPruning.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FullSearch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FullSearchFFT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FullSearchSpatial.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LaserSpeckleVelocimeter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MethodsFactory.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FramesGrabberCV.h">
+      <Filter>FramesGrabber</Filter>
+    </ClInclude>
+    <ClInclude Include="MatchingMethod.h">
+      <Filter>MatchingMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="SpiralSearch.h">
+      <Filter>MatchingMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="FullSearchSpatial.h">
+      <Filter>MatchingMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="FullSearchFFT.h">
+      <Filter>MatchingMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="FullSearch.h">
+      <Filter>MatchingMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="LowResolutionPruning.h">
+      <Filter>MatchingMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="FeaturesMethod.h">
+      <Filter>FeaturesMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="FeatureTracking.h">
+      <Filter>FeaturesMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="OpticalFlow.h">
+      <Filter>FeaturesMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="Gaussian3plus.h">
+      <Filter>SubpixelEstimators</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

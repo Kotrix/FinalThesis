@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include <opencv2/core.hpp>
+#include <opencv2/core/core.hpp>
 
 using namespace cv;
 
@@ -19,7 +19,7 @@ public:
 	@param bestLoc		peak with pixel accuracy
 	@return				estimated sub-pixel translation value
 	*/
-	virtual Point2f estimate(const Mat& corr, Point bestLoc) const { return Point2f(0); }
+	virtual Point2f estimate(const Mat& map, Point bestLoc) const { return Point2f(0); }
 
 	virtual int getType() const = 0;
 	virtual int getMargin() const = 0;

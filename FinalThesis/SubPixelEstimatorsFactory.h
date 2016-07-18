@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "Gaussian3.h"
-#include "MetricSSD.h"
 
 class SubPixelEstimatorsFactory
 {

@@ -5,9 +5,9 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc.hpp>
 
-class FramesGrabberVC : public FramesGrabber
+class FramesGrabberCV : public FramesGrabber
 {
-	VideoCapture mVideoCapture; /**< Camera or video connection */
+	VideoCapture mVidCap; /**< Camera or video connection */
 	String mSourceType; /**< Name of frame source: Camera, Video or Sequence */
 
 public:
@@ -15,17 +15,17 @@ public:
 	Open given camera
 	@param cam_id			id of camera to open
 	*/
-	FramesGrabberVC(int cam_id) : FramesGrabber()
+	FramesGrabberCV(int cam_id) : FramesGrabber()
 	{
 		//check for camera availaibilty
-		if (!mVideoCapture.open(cam_id))
+		if (!mVidCap.open(cam_id))
 		{
 			CV_Error(CV_StsBadArg, String(mSourceType + " " + to_string(cam_id) + " not found!\n"));
 		}
 		else
 		{
 			mSourceType = "Camera";
-			cout << "FramesGrabberVC: " << mSourceType << " ready\n";
+			cout << "FramesGrabberCV: " << mSourceType << " ready\n";
 			mFPS = -1;
 		}
 	}
@@ -34,7 +34,7 @@ public:
 	Open given videofile or images sequence
 	@param videoname		path of videofile to open
 	*/
-	FramesGrabberVC(const String& videoname) : FramesGrabber()
+	FramesGrabberCV(const String& videoname) : FramesGrabber()
 	{
 		//check for video/images availability
 		if (videoname.find(".jpg") == string::npos &&
@@ -42,37 +42,37 @@ public:
 			videoname.find(".bmp") == string::npos &&
 			videoname.find(".gif") == string::npos)
 		{
-			if (!mVideoCapture.open(videoname, CAP_FFMPEG))
+			if (!mVidCap.open(videoname, CAP_FFMPEG))
 				CV_Error(CV_StsBadArg, String(mSourceType + " " + videoname + " not found!\n"));
 			else
 			{
 				mSourceType = "Video";
-				cout << "FramesGrabberVC: " << mSourceType << " " << videoname << " ready\n";
-				mFPS = mVideoCapture.get(CAP_PROP_FPS);
+				cout << "FramesGrabberCV: " << mSourceType << " " << videoname << " ready\n";
+				mFPS = mVidCap.get(CAP_PROP_FPS);
 			}
 		}
 		else
 		{
-			if (!mVideoCapture.open(videoname, CAP_IMAGES))
+			if (!mVidCap.open(videoname, CAP_IMAGES))
 				CV_Error(CV_StsBadArg, String(mSourceType + " " + videoname + " not found!\n"));
 			else
 			{
 				mSourceType = "Sequence";
-				cout << "FramesGrabberVC: " << mSourceType << " " << videoname << " ready\n";
+				cout << "FramesGrabberCV: " << mSourceType << " " << videoname << " ready\n";
 			}
 		}
 
 	}
 
-	~FramesGrabberVC()
+	~FramesGrabberCV()
 	{
-		if (mVideoCapture.isOpened())
-		mVideoCapture.release();
+		if (mVidCap.isOpened())
+		mVidCap.release();
 	}
 
 	bool acquire(Mat& frame) override
 	{
-		if (!mVideoCapture.read(frame))
+		if (!mVidCap.read(frame))
 		{
 			cout << mSourceType << " stopped. Press any key\n";
 			return false;

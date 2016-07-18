@@ -1,7 +1,5 @@
 #pragma once
 #include "FeaturesMethod.h"
-#include <iostream>
-#include <vector>
 
 class FeatureTracking : public FeaturesMethod
 {
@@ -53,12 +51,9 @@ class FeatureTracking : public FeaturesMethod
 		//draw results if needed
 		if (mDrawResult)
 		{
-			Mat result;
 			drawMatches(mPrevFrame, mPrevKeypoints, next_img, keypoints,
-			            good_matches, result, Scalar::all(-1), Scalar::all(-1),
+			            good_matches, mResultImg, Scalar::all(-1), Scalar::all(-1),
 			            vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
-
-			imshow(mResultWindow, result);
 		}
 
 		//calculate transformation matrix

@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "FramesGrabberSeq.h"
-#include "FramesGrabberVC.h"
+#include "FramesGrabberCV.h"
 
 class FramesGrabberFactory
 {
@@ -9,7 +9,7 @@ public:
 
 	static Ptr<FramesGrabber> getFramesGrabber(int cam_id)
 	{
-		return new FramesGrabberVC(cam_id);
+		return new FramesGrabberCV(cam_id);
 	}
 
 	static Ptr<FramesGrabber> getFramesGrabber(const String& filename)
@@ -20,7 +20,7 @@ public:
 			return new FramesGrabberSeq(filename);
 		}
 
-		return new FramesGrabberVC(filename);
+		return new FramesGrabberCV(filename);
 	}
 
 };

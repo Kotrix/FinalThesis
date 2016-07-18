@@ -28,6 +28,6 @@ public:
 	@param			acquired frame
 	@return			true if success, false otherwise
 	*/
-	virtual bool acquire(Mat& frame) = 0;
+	virtual bool acquire(Mat& output) = 0;
 
 };

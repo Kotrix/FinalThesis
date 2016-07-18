@@ -22,11 +22,11 @@ public:
 
 	virtual double calculate(const Mat& img, const Mat& temp) const = 0;
 	virtual Point findBestLoc(const Mat& map) const = 0;
-	virtual bool isBetter(double value, double threshold) const = 0;
+	virtual bool isBetter(double val, double thresh) const = 0;
 
 	Mat& getMapSpatial(const Mat& img, const Mat& temp)
 	{
-		//init similarity map
+		//init similarity map only if needed
 		Size resultSize = img.size() - temp.size() + Size(1, 1);
 		if (mSimilarityMap.size() != resultSize)
 			mSimilarityMap = Mat(resultSize, CV_32F);

@@ -1,6 +1,5 @@
 #pragma once
 #include "SimilarityMetric.h"
-#include <opencv2/core/core.hpp>
 
 class LowerBetterMetric : public SimilarityMetric
 {

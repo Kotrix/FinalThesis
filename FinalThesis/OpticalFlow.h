@@ -1,7 +1,5 @@
 ﻿#pragma once
 #include "FeaturesMethod.h"
-#include <opencv2/highgui/highgui.hpp>
-#include <iostream>
 
 class OpticalFlow : public FeaturesMethod
 {
@@ -28,13 +26,12 @@ class OpticalFlow : public FeaturesMethod
 
 	void drawPoints()
 	{
-		Mat draw = mPrevFrame.clone();
-		cvtColor(draw, draw, CV_GRAY2BGR);
+		mPrevFrame.copyTo(mResultImg);
+		cvtColor(mResultImg, mResultImg, CV_GRAY2BGR);
 		for (int i = 0; i < mPrevPoints2f.size(); i++)
 		{
-			circle(draw, mPrevPoints2f[i], mPrevSize.width / 100, Scalar(0, 0, 255), 2);
+			circle(mResultImg, mPrevPoints2f[i], mPrevSize.width / 100, Scalar(0, 0, 255), 2);
 		}
-		imshow(mResultWindow, draw);
 	}
 
 	Mat getTransform(const Mat& img) override

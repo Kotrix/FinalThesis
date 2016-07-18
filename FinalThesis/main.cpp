@@ -73,6 +73,7 @@ int main(int argc, char** argv)
 	waitKey();
 
 	namedWindow("Frame", WINDOW_NORMAL);
+	if (draw) namedWindow("Method", WINDOW_NORMAL);
 	for (;;)
 	{
 		Mat frame;
@@ -99,6 +100,7 @@ int main(int argc, char** argv)
 		cout << endl;
 
 		imshow("Frame", frame);
+		if (draw) imshow("Method", LSV.getMethodResult());
 		if (waitKey(1) != -1) break;
 	}
  
