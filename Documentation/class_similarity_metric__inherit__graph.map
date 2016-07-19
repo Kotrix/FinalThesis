@@ -1,0 +1,12 @@
+<map id="SimilarityMetric" name="SimilarityMetric">
+<area shape="rect" id="node2" href="$class_higher_better_metric.html" title="{HigherBetterMetric\n||+ HigherBetterMetric()\l+ findBestLoc()\l+ isBetter()\l}" alt="" coords="231,248,382,355"/>
+<area shape="rect" id="node7" href="$class_lower_better_metric.html" title="{LowerBetterMetric\n||+ LowerBetterMetric()\l+ findBestLoc()\l+ isBetter()\l}" alt="" coords="616,248,763,355"/>
+<area shape="rect" id="node3" href="$class_metric_c_c.html" title="{MetricCC\n||+ MetricCC()\l+ calculate()\l}" alt="" coords="5,403,101,495"/>
+<area shape="rect" id="node4" href="$class_metric_n_c_c.html" title="{MetricNCC\n||+ MetricNCC()\l+ calculate()\l}" alt="" coords="126,403,231,495"/>
+<area shape="rect" id="node5" href="$class_metric_n_x_c.html" title="{MetricNXC\n||+ MetricNXC()\l+ calculate()\l}" alt="" coords="255,403,358,495"/>
+<area shape="rect" id="node6" href="$class_metric_x_c.html" title="{MetricXC\n||+ MetricXC()\l+ calculate()\l}" alt="" coords="382,403,477,495"/>
+<area shape="rect" id="node8" href="$class_metric_m_a_d.html" title="{MetricMAD\n||+ MetricMAD()\l+ calculate()\l}" alt="" coords="501,403,608,495"/>
+<area shape="rect" id="node9" href="$class_metric_n_s_s_d.html" title="{MetricNSSD\n||+ MetricNSSD()\l+ calculate()\l}" alt="" coords="632,403,747,495"/>
+<area shape="rect" id="node10" href="$class_metric_s_a_d.html" title="{MetricSAD\n||+ MetricSAD()\l+ calculate()\l}" alt="" coords="771,403,877,495"/>
+<area shape="rect" id="node11" href="$class_metric_s_s_d.html" title="{MetricSSD\n||+ MetricSSD()\l+ calculate()\l}" alt="" coords="901,403,1006,495"/>
+</map>

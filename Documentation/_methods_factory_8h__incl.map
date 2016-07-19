@@ -1,0 +1,27 @@
+<map id="C:/Users/Krzysztof/Documents/Visual Studio 2013/Projects/FinalThesis/FinalThesis/MethodsFactory.h" name="C:/Users/Krzysztof/Documents/Visual Studio 2013/Projects/FinalThesis/FinalThesis/MethodsFactory.h">
+<area shape="rect" id="node2" href="$_full_search_f_f_t_8h.html" title="FullSearchFFT.h" alt="" coords="1250,124,1369,151"/>
+<area shape="rect" id="node25" href="$_full_search_spatial_8h.html" title="FullSearchSpatial.h" alt="" coords="1091,124,1226,151"/>
+<area shape="rect" id="node26" href="$_low_resolution_pruning_8h.html" title="LowResolutionPruning.h" alt="" coords="219,199,381,225"/>
+<area shape="rect" id="node27" href="$_spiral_search_8h.html" title="SpiralSearch.h" alt="" coords="1400,124,1507,151"/>
+<area shape="rect" id="node30" href="$_sparse_optical_flow_8h.html" title="SparseOpticalFlow.h" alt="" coords="1534,124,1677,151"/>
+<area shape="rect" id="node35" href="$_feature_tracking_8h.html" title="FeatureTracking.h" alt="" coords="1702,124,1829,151"/>
+<area shape="rect" id="node3" href="$_full_search_8h.html" title="FullSearch.h" alt="" coords="1111,199,1206,225"/>
+<area shape="rect" id="node4" href="$_matching_method_8h.html" title="MatchingMethod.h" alt="" coords="1073,281,1202,307"/>
+<area shape="rect" id="node5" href="$_method_8h.html" title="Method.h" alt="" coords="1323,363,1399,389"/>
+<area shape="rect" id="node8" href="$_metrics_factory_8h.html" title="MetricsFactory.h" alt="" coords="571,363,691,389"/>
+<area shape="rect" id="node21" href="$_sub_pixel_estimators_factory_8h.html" title="SubPixelEstimatorsFactory.h" alt="" coords="1031,363,1223,389"/>
+<area shape="rect" id="node9" href="$_metric_s_s_d_8h.html" title="MetricSSD.h" alt="" coords="93,437,189,464"/>
+<area shape="rect" id="node13" href="$_metric_n_s_s_d_8h.html" title="MetricNSSD.h" alt="" coords="214,437,319,464"/>
+<area shape="rect" id="node14" href="$_metric_x_c_8h.html" title="MetricXC.h" alt="" coords="819,437,904,464"/>
+<area shape="rect" id="node16" href="$_metric_n_x_c_8h.html" title="MetricNXC.h" alt="" coords="929,437,1023,464"/>
+<area shape="rect" id="node17" href="$_metric_c_c_8h.html" title="MetricCC.h" alt="" coords="587,437,674,464"/>
+<area shape="rect" id="node18" href="$_metric_n_c_c_8h.html" title="MetricNCC.h" alt="" coords="699,437,795,464"/>
+<area shape="rect" id="node19" href="$_metric_s_a_d_8h.html" title="MetricSAD.h" alt="" coords="344,437,440,464"/>
+<area shape="rect" id="node20" href="$_metric_m_a_d_8h.html" title="MetricMAD.h" alt="" coords="464,437,563,464"/>
+<area shape="rect" id="node10" href="$_lower_better_metric_8h.html" title="LowerBetterMetric.h" alt="" coords="260,512,399,539"/>
+<area shape="rect" id="node11" href="$_similarity_metric_8h.html" title="SimilarityMetric.h" alt="" coords="268,587,391,613"/>
+<area shape="rect" id="node15" href="$_higher_better_metric_8h.html" title="HigherBetterMetric.h" alt="" coords="676,512,817,539"/>
+<area shape="rect" id="node22" href="$_gaussian3_8h.html" title="Gaussian3.h" alt="" coords="1047,437,1142,464"/>
+<area shape="rect" id="node23" href="$_sub_pixel_estimator_8h.html" title="SubPixelEstimator.h" alt="" coords="1024,512,1165,539"/>
+<area shape="rect" id="node31" href="$_features_method_8h.html" title="FeaturesMethod.h" alt="" coords="1703,199,1830,225"/>
+</map>

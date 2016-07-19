@@ -1,0 +1,4 @@
+<map id="MetricSAD" name="MetricSAD">
+<area shape="rect" id="node2" href="$class_lower_better_metric.html" title="{LowerBetterMetric\n||+ LowerBetterMetric()\l+ findBestLoc()\l+ isBetter()\l}" alt="" coords="5,248,152,355"/>
+<area shape="rect" id="node3" href="$class_similarity_metric.html" title="{SimilarityMetric\n||+ SimilarityMetric()\l+ ~SimilarityMetric()\l+ calculate()\l+ findBestLoc()\l+ isBetter()\l+ getMapSpatial()\l+ getMapFreq()\l+ getName()\l+ getType()\l}" alt="" coords="9,5,149,200"/>
+</map>

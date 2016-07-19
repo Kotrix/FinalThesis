@@ -1,0 +1,4 @@
+<map id="MetricCC" name="MetricCC">
+<area shape="rect" id="node2" href="$class_higher_better_metric.html" title="{HigherBetterMetric\n||+ HigherBetterMetric()\l+ findBestLoc()\l+ isBetter()\l}" alt="" coords="5,248,156,355"/>
+<area shape="rect" id="node3" href="$class_similarity_metric.html" title="{SimilarityMetric\n||+ SimilarityMetric()\l+ ~SimilarityMetric()\l+ calculate()\l+ findBestLoc()\l+ isBetter()\l+ getMapSpatial()\l+ getMapFreq()\l+ getName()\l+ getType()\l}" alt="" coords="11,5,151,200"/>
+</map>

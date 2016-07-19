@@ -1,0 +1,5 @@
+var searchData=
+[
+  ['calculate',['calculate',['../class_metric_c_c.html#a28d9b0e9acacffc46c7684b655540c89',1,'MetricCC::calculate()'],['../class_metric_m_a_d.html#ae6eda5c3aa796a320d03dff75721b6b2',1,'MetricMAD::calculate()'],['../class_metric_n_c_c.html#a59645307803305234b401fba1e7c3f71',1,'MetricNCC::calculate()'],['../class_metric_n_s_s_d.html#a69d094173ec399cf004c39cc61191861',1,'MetricNSSD::calculate()'],['../class_metric_n_x_c.html#a45bf43b3dafae232384f3a777ca2979a',1,'MetricNXC::calculate()'],['../class_metric_s_a_d.html#a6cab12c0f4b5e454718280efce0d1c81',1,'MetricSAD::calculate()'],['../class_metric_s_s_d.html#a125255725f559525519799004782e025',1,'MetricSSD::calculate()'],['../class_metric_x_c.html#a0d21bc3546132b038ec59683b2b3cb29',1,'MetricXC::calculate()'],['../class_similarity_metric.html#a57586c2ba4da6387f85c513242d228bf',1,'SimilarityMetric::calculate()']]],
+  ['cc',['CC',['../class_similarity_metric.html#a0777b0dc6f7e6acd1172d6599fbefff6ab95b19b0274e19ae9ac2177b97264ea1',1,'SimilarityMetric']]]
+];

@@ -1,0 +1,6 @@
+<map id="FullSearch" name="FullSearch">
+<area shape="rect" id="node4" href="$class_full_search_f_f_t.html" title="{FullSearchFFT\n||+ FullSearchFFT()\l+ getDisplacement()\l}" alt="" coords="5,587,144,679"/>
+<area shape="rect" id="node5" href="$class_full_search_spatial.html" title="{FullSearchSpatial\n||+ FullSearchSpatial()\l+ getDisplacement()\l}" alt="" coords="168,587,312,679"/>
+<area shape="rect" id="node2" href="$class_matching_method.html" title="{MatchingMethod\n|# mMetric\l# mSubPixelEstimator\l# mTemplateROI\l# mSearchROI\l# mMaxTranslation\l# mTemplate\l|+ MatchingMethod()\l+ ~MatchingMethod()\l}" alt="" coords="81,233,233,399"/>
+<area shape="rect" id="node3" href="$class_method.html" title="{Method\n|# mDrawResult\l# mResultImg\l|+ Method()\l+ ~Method()\l+ getName()\l+ drawingOnOff()\l+ getResultImg()\l+ getDisplacement()\l# addToName()\l}" alt="" coords="88,5,227,185"/>
+</map>

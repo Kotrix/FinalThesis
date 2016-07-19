@@ -1,0 +1,7 @@
+<map id="LowerBetterMetric" name="LowerBetterMetric">
+<area shape="rect" id="node3" href="$class_metric_m_a_d.html" title="{MetricMAD\n||+ MetricMAD()\l+ calculate()\l}" alt="" coords="5,403,112,495"/>
+<area shape="rect" id="node4" href="$class_metric_n_s_s_d.html" title="{MetricNSSD\n||+ MetricNSSD()\l+ calculate()\l}" alt="" coords="136,403,251,495"/>
+<area shape="rect" id="node5" href="$class_metric_s_a_d.html" title="{MetricSAD\n||+ MetricSAD()\l+ calculate()\l}" alt="" coords="275,403,381,495"/>
+<area shape="rect" id="node6" href="$class_metric_s_s_d.html" title="{MetricSSD\n||+ MetricSSD()\l+ calculate()\l}" alt="" coords="405,403,510,495"/>
+<area shape="rect" id="node2" href="$class_similarity_metric.html" title="{SimilarityMetric\n||+ SimilarityMetric()\l+ ~SimilarityMetric()\l+ calculate()\l+ findBestLoc()\l+ isBetter()\l+ getMapSpatial()\l+ getMapFreq()\l+ getName()\l+ getType()\l}" alt="" coords="190,5,330,200"/>
+</map>

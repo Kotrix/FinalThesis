@@ -1,0 +1,7 @@
+<map id="HigherBetterMetric" name="HigherBetterMetric">
+<area shape="rect" id="node3" href="$class_metric_c_c.html" title="{MetricCC\n||+ MetricCC()\l+ calculate()\l}" alt="" coords="5,403,101,495"/>
+<area shape="rect" id="node4" href="$class_metric_n_c_c.html" title="{MetricNCC\n||+ MetricNCC()\l+ calculate()\l}" alt="" coords="126,403,231,495"/>
+<area shape="rect" id="node5" href="$class_metric_n_x_c.html" title="{MetricNXC\n||+ MetricNXC()\l+ calculate()\l}" alt="" coords="255,403,358,495"/>
+<area shape="rect" id="node6" href="$class_metric_x_c.html" title="{MetricXC\n||+ MetricXC()\l+ calculate()\l}" alt="" coords="382,403,477,495"/>
+<area shape="rect" id="node2" href="$class_similarity_metric.html" title="{SimilarityMetric\n||+ SimilarityMetric()\l+ ~SimilarityMetric()\l+ calculate()\l+ findBestLoc()\l+ isBetter()\l+ getMapSpatial()\l+ getMapFreq()\l+ getName()\l+ getType()\l}" alt="" coords="173,5,313,200"/>
+</map>

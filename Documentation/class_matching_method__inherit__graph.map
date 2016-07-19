@@ -1,0 +1,8 @@
+<map id="MatchingMethod" name="MatchingMethod">
+<area shape="rect" id="node3" href="$class_full_search.html" title="{FullSearch\n||+ FullSearch()\l# getBestLoc()\l}" alt="" coords="104,454,211,546"/>
+<area shape="rect" id="node6" href="$class_low_resolution_pruning.html" title="{LowResolutionPruning\n||+ LowResolutionPruning()\l+ ~LowResolutionPruning()\l+ getDisplacement()\l}" alt="" coords="235,447,413,553"/>
+<area shape="rect" id="node7" href="$class_spiral_search.html" title="{SpiralSearch\n||+ SpiralSearch()\l+ getDisplacement()\l}" alt="" coords="437,454,576,546"/>
+<area shape="rect" id="node2" href="$class_method.html" title="{Method\n|# mDrawResult\l# mResultImg\l|+ Method()\l+ ~Method()\l+ getName()\l+ drawingOnOff()\l+ getResultImg()\l+ getDisplacement()\l# addToName()\l}" alt="" coords="255,5,393,185"/>
+<area shape="rect" id="node4" href="$class_full_search_f_f_t.html" title="{FullSearchFFT\n||+ FullSearchFFT()\l+ getDisplacement()\l}" alt="" coords="5,601,144,693"/>
+<area shape="rect" id="node5" href="$class_full_search_spatial.html" title="{FullSearchSpatial\n||+ FullSearchSpatial()\l+ getDisplacement()\l}" alt="" coords="168,601,312,693"/>
+</map>

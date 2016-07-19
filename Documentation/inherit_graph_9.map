@@ -1,0 +1,13 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$class_similarity_metric.html" title="SimilarityMetric" alt="" coords="5,183,117,209"/>
+<area shape="rect" id="node2" href="$class_higher_better_metric.html" title="HigherBetterMetric" alt="" coords="165,107,296,133"/>
+<area shape="rect" id="node7" href="$class_lower_better_metric.html" title="LowerBetterMetric" alt="" coords="167,259,294,285"/>
+<area shape="rect" id="node3" href="$class_metric_c_c.html" title="MetricCC" alt="" coords="353,5,429,32"/>
+<area shape="rect" id="node4" href="$class_metric_n_c_c.html" title="MetricNCC" alt="" coords="349,56,434,83"/>
+<area shape="rect" id="node5" href="$class_metric_n_x_c.html" title="MetricNXC" alt="" coords="350,107,433,133"/>
+<area shape="rect" id="node6" href="$class_metric_x_c.html" title="MetricXC" alt="" coords="354,157,429,184"/>
+<area shape="rect" id="node8" href="$class_metric_m_a_d.html" title="MetricMAD" alt="" coords="348,208,435,235"/>
+<area shape="rect" id="node9" href="$class_metric_n_s_s_d.html" title="MetricNSSD" alt="" coords="344,259,439,285"/>
+<area shape="rect" id="node10" href="$class_metric_s_a_d.html" title="MetricSAD" alt="" coords="349,309,434,336"/>
+<area shape="rect" id="node11" href="$class_metric_s_s_d.html" title="MetricSSD" alt="" coords="349,360,434,387"/>
+</map>

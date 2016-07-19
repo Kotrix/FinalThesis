@@ -1,0 +1,4 @@
+<map id="LowResolutionPruning" name="LowResolutionPruning">
+<area shape="rect" id="node2" href="$class_matching_method.html" title="{MatchingMethod\n|# mMetric\l# mSubPixelEstimator\l# mTemplateROI\l# mSearchROI\l# mMaxTranslation\l# mTemplate\l|+ MatchingMethod()\l+ ~MatchingMethod()\l}" alt="" coords="19,233,171,399"/>
+<area shape="rect" id="node3" href="$class_method.html" title="{Method\n|# mDrawResult\l# mResultImg\l|+ Method()\l+ ~Method()\l+ getName()\l+ drawingOnOff()\l+ getResultImg()\l+ getDisplacement()\l# addToName()\l}" alt="" coords="25,5,164,185"/>
+</map>

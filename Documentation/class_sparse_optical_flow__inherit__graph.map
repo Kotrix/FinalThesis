@@ -1,0 +1,4 @@
+<map id="SparseOpticalFlow" name="SparseOpticalFlow">
+<area shape="rect" id="node2" href="$class_features_method.html" title="{FeaturesMethod\n|# mPrevFrame\l# mPrevSize\l# mDetector\l# mPrevKeypoints\l# mDetectorMask\l# mScale\l# mNeedScaling\l# mEstimationType\l|+ FeaturesMethod()\l# getTransform()\l# RANSAC()\l# getRTMatrix()\l}" alt="" coords="13,233,149,457"/>
+<area shape="rect" id="node3" href="$class_method.html" title="{Method\n|# mDrawResult\l# mResultImg\l|+ Method()\l+ ~Method()\l+ getName()\l+ drawingOnOff()\l+ getResultImg()\l+ getDisplacement()\l# addToName()\l}" alt="" coords="11,5,150,185"/>
+</map>

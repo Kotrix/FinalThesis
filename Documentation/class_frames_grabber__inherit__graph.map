@@ -1,0 +1,4 @@
+<map id="FramesGrabber" name="FramesGrabber">
+<area shape="rect" id="node2" href="$class_frames_grabber_c_v.html" title="{FramesGrabberCV\n||+ FramesGrabberCV()\l+ FramesGrabberCV()\l+ ~FramesGrabberCV()\l+ acquire()\l}" alt="" coords="5,248,164,369"/>
+<area shape="rect" id="node3" href="$class_frames_grabber_seq.html" title="{FramesGrabberSeq\n||+ FramesGrabberSeq()\l+ ~FramesGrabberSeq()\l+ acquire()\l}" alt="" coords="189,255,351,362"/>
+</map>

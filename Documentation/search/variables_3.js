@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['matcher',['matcher',['../struct_method_params.html#a8338a541e7de1169aa16ba9171ff6169',1,'MethodParams']]],
+  ['maxshift',['maxShift',['../struct_method_params.html#a3f9de50c76d0d45c68a111cd63408a46',1,'MethodParams']]],
+  ['mdetector',['mDetector',['../class_features_method.html#adc5d2990ba9d7635189025f4714d8181',1,'FeaturesMethod']]],
+  ['mdetectormask',['mDetectorMask',['../class_features_method.html#a684588cd86a11b3dff1c0f2b42006bf2',1,'FeaturesMethod']]],
+  ['mdrawresult',['mDrawResult',['../class_method.html#a0d3d07700196836cd8dfda5131aeea3a',1,'Method']]],
+  ['mestimationtype',['mEstimationType',['../class_features_method.html#a076c5b88d77a5756c18d483aa3e44385',1,'FeaturesMethod']]],
+  ['metric',['metric',['../struct_method_params.html#ac1fafd13b8d47f207d67651ae14f168d',1,'MethodParams']]],
+  ['mfps',['mFPS',['../class_frames_grabber.html#a21272ce4ccf08123320a77839aa74991',1,'FramesGrabber']]],
+  ['mframenumber',['mFrameNumber',['../class_frames_grabber.html#a70d267568597b71d86378f19f4659841',1,'FramesGrabber']]],
+  ['mmaxtranslation',['mMaxTranslation',['../class_matching_method.html#a2184180aac232e01ad45d199ec0408ef',1,'MatchingMethod']]],
+  ['mmetric',['mMetric',['../class_matching_method.html#ae49dc767e837bc0e6fe20518dd3640df',1,'MatchingMethod']]],
+  ['mneedscaling',['mNeedScaling',['../class_features_method.html#a942ada91c96ff31c0299c554d81055f9',1,'FeaturesMethod']]],
+  ['mprevframe',['mPrevFrame',['../class_features_method.html#af6acf6c08d026dc22fe7c141d695a96d',1,'FeaturesMethod']]],
+  ['mprevkeypoints',['mPrevKeypoints',['../class_features_method.html#a1b359013b18c5d7ce8c78d2e13b8e9aa',1,'FeaturesMethod']]],
+  ['mprevsize',['mPrevSize',['../class_features_method.html#a47ffae33253e0b6b7499979c21c8b82f',1,'FeaturesMethod']]],
+  ['mresultimg',['mResultImg',['../class_method.html#a2bf98db48828567b2058c1b239641562',1,'Method']]],
+  ['mscale',['mScale',['../class_features_method.html#a3e760afb7e209f7a7108217d1f92385d',1,'FeaturesMethod']]],
+  ['msearchroi',['mSearchROI',['../class_matching_method.html#a0b8e51955304f885f99bbaa84b4ac37c',1,'MatchingMethod']]],
+  ['msize',['mSize',['../class_frames_grabber.html#a837e2597ec3837d34eb64a32d4949a1a',1,'FramesGrabber']]],
+  ['msubpixelestimator',['mSubPixelEstimator',['../class_matching_method.html#ab0b472bec4a6b1ce09abd5ac172da4e5',1,'MatchingMethod']]],
+  ['mtemplate',['mTemplate',['../class_matching_method.html#a1b6274ea1bb343abf53dc16a5a70d1b6',1,'MatchingMethod']]],
+  ['mtemplateroi',['mTemplateROI',['../class_matching_method.html#ae720128617b3d2291c8dea40e2677aac',1,'MatchingMethod']]],
+  ['mtype',['mType',['../class_frames_grabber.html#a279e986ce5eaaea86f9af6dd318e171b',1,'FramesGrabber']]]
+];

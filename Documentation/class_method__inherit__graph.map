@@ -1,0 +1,11 @@
+<map id="Method" name="Method">
+<area shape="rect" id="node2" href="$class_features_method.html" title="{FeaturesMethod\n|# mPrevFrame\l# mPrevSize\l# mDetector\l# mPrevKeypoints\l# mDetectorMask\l# mScale\l# mNeedScaling\l# mEstimationType\l|+ FeaturesMethod()\l# getTransform()\l# RANSAC()\l# getRTMatrix()\l}" alt="" coords="176,233,312,457"/>
+<area shape="rect" id="node5" href="$class_matching_method.html" title="{MatchingMethod\n|# mMetric\l# mSubPixelEstimator\l# mTemplateROI\l# mSearchROI\l# mMaxTranslation\l# mTemplate\l|+ MatchingMethod()\l+ ~MatchingMethod()\l}" alt="" coords="412,263,564,428"/>
+<area shape="rect" id="node3" href="$class_feature_tracking.html" title="{FeatureTracking\n||+ FeatureTracking()\l+ getDisplacement()\l}" alt="" coords="5,513,144,605"/>
+<area shape="rect" id="node4" href="$class_sparse_optical_flow.html" title="{SparseOpticalFlow\n||+ SparseOpticalFlow()\l+ getDisplacement()\l}" alt="" coords="169,513,319,605"/>
+<area shape="rect" id="node6" href="$class_full_search.html" title="{FullSearch\n||+ FullSearch()\l# getBestLoc()\l}" alt="" coords="344,513,451,605"/>
+<area shape="rect" id="node9" href="$class_low_resolution_pruning.html" title="{LowResolutionPruning\n||+ LowResolutionPruning()\l+ ~LowResolutionPruning()\l+ getDisplacement()\l}" alt="" coords="475,505,653,612"/>
+<area shape="rect" id="node10" href="$class_spiral_search.html" title="{SpiralSearch\n||+ SpiralSearch()\l+ getDisplacement()\l}" alt="" coords="677,513,816,605"/>
+<area shape="rect" id="node7" href="$class_full_search_f_f_t.html" title="{FullSearchFFT\n||+ FullSearchFFT()\l+ getDisplacement()\l}" alt="" coords="245,660,384,752"/>
+<area shape="rect" id="node8" href="$class_full_search_spatial.html" title="{FullSearchSpatial\n||+ FullSearchSpatial()\l+ getDisplacement()\l}" alt="" coords="408,660,552,752"/>
+</map>
