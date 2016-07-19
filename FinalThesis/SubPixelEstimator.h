@@ -3,14 +3,17 @@
 
 using namespace cv;
 
-enum ESTIMATOR_TYPE
-{
-	GAUSS3, GAUSS3PLUS, GAUSS5
-};
-
 class SubPixelEstimator
 {
 public:
+	/**
+	@enum enum for easier estimator selection
+	*/
+	enum ESTIMATOR_TYPE
+	{
+		GAUSS3, GAUSS5
+	};
+
 	virtual ~SubPixelEstimator(){}
 
 	/**

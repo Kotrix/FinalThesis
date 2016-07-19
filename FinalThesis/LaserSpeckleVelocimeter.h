@@ -17,16 +17,24 @@ class LaserSpeckleVelocimeter
 	Point2f mVelocity{ 0 }; /**< Velocity of last displacement  */
 	double mTime = 0; /**< Calculation time of last displacement */
 	uint64 mFrameNumber = 0; /**< Actual frame number */
-	double PX2MM; /**< Calibration matrix */
+	double PX2MM; /**< Calibration factor (unused yet) */
 
+public:
 	/**
-	Initialize method
-	@param method			method number from METHODS enum
-	@param params			method parameters from MethodParams struct
-	@param draw				flag controlling results drawing
+	Explicit constructor
+	@param path			path to videofile / the first image in the sequence / folder path with wildcard '*' / default camera if "0" 
+	@param method		method number according to Method::METHODS enum
+	@param params		method parameters in MethodParams structure
+	@param px2mm		calibration factor (unused yet)
+	@param draw			results drawing flag
 	*/
-	void initMethod(int method, MethodParams params, bool draw)
+	explicit LaserSpeckleVelocimeter(const String& path, int method, MethodParams params, double px2mm = 1.0, bool draw = false) : PX2MM(px2mm)
 	{
+		if (path == "0") 
+			mFramesGrabber = FramesGrabberFactory::getFramesGrabber(0);
+		else
+			mFramesGrabber = FramesGrabberFactory::getFramesGrabber(path);
+
 		Mat first;
 		CV_Assert(mFramesGrabber->acquire(first));
 
@@ -35,17 +43,6 @@ class LaserSpeckleVelocimeter
 		//display results for debugging
 		cout << "Method: " << mMethod->getName() << endl;
 		if (draw) mMethod->drawingOnOff();
-	}
-
-public:
-	explicit LaserSpeckleVelocimeter(const String& path, int method, MethodParams params, double px2mm = 1.0, bool draw = false) : PX2MM(px2mm)
-	{
-		if (path == "0") 
-			mFramesGrabber = FramesGrabberFactory::getFramesGrabber(0);
-		else
-			mFramesGrabber = FramesGrabberFactory::getFramesGrabber(path);
-
-		initMethod(method, params, draw);
 	}
 
 	/**
@@ -87,12 +84,12 @@ public:
 	*/
 	bool nextMeasurement(OutputArray output)
 	{
-		//start timer
-		mTime = static_cast<double>(getTickCount());
-
 		Mat frame;
 		if (!mFramesGrabber->acquire(frame)) return false;
 		mFrameNumber++;
+
+		//start timer
+		mTime = static_cast<double>(getTickCount());
 
 		//measure next displacement
 		Point3f measurement = mMethod->getDisplacement(frame);

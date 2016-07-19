@@ -2,19 +2,20 @@
 #pragma once
 #include <opencv2/imgproc.hpp>
 
-//enum for easier similarity metric selection
-enum METRICS
-{
-	SSD, NSSD, XC, NXC, CC, NCC, SAD, MAD
-};
-
 class SimilarityMetric
 {
 	String mName; /**< Metric name */
-	int mType; /**< Method number according to METRICS enum */
+	int mType; /**< Method number according to SimilarityMetric::METRICS enum */
 	Mat mSimilarityMap; /**< Container for similarity map in memory (avoid reallocation) */
 
 public:
+	/**
+	@enum enum for easier metrics selection
+	*/
+	enum METRICS
+	{
+		SSD, NSSD, XC, NXC, CC, NCC, SAD, MAD
+	};
 
 	SimilarityMetric(const String& name, int type) : mName(name), mType(type), mSimilarityMap() {}
 	virtual ~SimilarityMetric() {}

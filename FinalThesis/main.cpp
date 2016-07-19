@@ -9,15 +9,15 @@ int main(int argc, char** argv)
 {
 	cout << "Speckle velocimetry - Krzysztof Kotowski\n";
 
-	int method = FULL_FFT;
+	int method = Method::SPIRAL;
 	bool draw = false;
 	double px2mm = 1.0;
 
 	MethodParams params;
-	params.metric = NXC;
-	params.templRatio = 0.6;
+	params.metric = SimilarityMetric::SAD;
+	params.templRatio = 0.7;
 	params.maxShift = 0.1;
-	params.layers = 3;
+	params.layers = 4;
 	params.detector = "Grid";
 	params.estimation = 1;
 	params.matcher = "FlannBased";
@@ -25,12 +25,12 @@ int main(int argc, char** argv)
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen1_05\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen2_1\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen5_0\\*.png";
-	//String path = "C:\\Users\\Krzysztof\\Pictures\\realData\\real5mms\\*.png";
+	String path = "C:\\Users\\Krzysztof\\Pictures\\realData\\real15mms\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen10_2\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen-20_0\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen-40_0\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen40_3\\*.png";
-	String path = "0";
+	//String path = "0";
 
 	/**
 	* CHECK ARGUMENTS

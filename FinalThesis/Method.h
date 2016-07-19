@@ -1,18 +1,10 @@
-﻿/* 
-Basis class for all methods
-*/
+﻿/** @file */
 #pragma once
 #include <opencv2/core/cvstd.hpp>
 #include <opencv2/core/mat.hpp>
-#include <opencv2/highgui.hpp>
 
 using namespace cv;
 
-//enum for easier method selection
-enum METHODS
-{
-	FULL_FFT, FULL_SPATIAL, LRP, SPIRAL, FLOW, FEATURE_MATCHING
-};
 
 /**
 Base class for every method in the system.
@@ -32,6 +24,14 @@ protected:
 	void addToName(const String& segment) { mMethodName = mMethodName + segment; }
 
 public:
+	/**
+	@enum enum for easier methods selection
+	*/
+	enum METHODS
+	{
+		FULL_FFT, FULL_SPATIAL, LRP, SPIRAL, OPTICAL_FLOW, FEATURE_MATCHING
+	};
+
 	explicit Method(const String& name) : mMethodName(name), mDrawResult(false), mResultImg() {}
 
 	virtual ~Method() {}

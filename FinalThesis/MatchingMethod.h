@@ -60,9 +60,9 @@ class MatchingMethod : public Method
 	{
 		//assure that maxShift is sufficient to compute sub-pixel estimation
 		double min = cv::min(mMaxShift*width, mMaxShift*height);
-		if (mSubPixelEstimator->getType() == GAUSS3)
+		if (mSubPixelEstimator->getType() == SubPixelEstimator::GAUSS3)
 			CV_Assert(min > 2);
-		else if (mSubPixelEstimator->getType() == GAUSS5)
+		else if (mSubPixelEstimator->getType() == SubPixelEstimator::GAUSS5)
 			CV_Assert(min > 4);
 
 		//assure that maxShift is not more than limit
@@ -108,7 +108,7 @@ public:
 	explicit MatchingMethod(const String& name, const Mat& first, int metric, double tempRatio, double maxShift) : Method(name), mTemplRatio(tempRatio), mMaxShift(maxShift)
 	{
 		mMetric = MetricsFactory::getMetric(metric);
-		mSubPixelEstimator = SubPixelEstimatorsFactory::getEstimator(GAUSS3);
+		mSubPixelEstimator = SubPixelEstimatorsFactory::getEstimator(SubPixelEstimator::GAUSS3);
 		addToName("_" + mMetric->getName());
 		initMatching(first);
 	}

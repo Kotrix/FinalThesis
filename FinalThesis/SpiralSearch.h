@@ -23,42 +23,42 @@ class SpiralSearch : public MatchingMethod
 	*/
 	void setThresholds(int metric)
 	{
-		if (metric == CC)
+		if (metric == SimilarityMetric::CC)
 		{
 			mPredThresh = mTemplateROI.area() * 500;
 			mPeakThresh = mTemplateROI.area() * 400;
 		}
-		else if (metric == MAD)
+		else if (metric == SimilarityMetric::MAD)
 		{
 			mPredThresh = 16;
 			mPeakThresh = 13;
 		}
-		else if (metric == NCC)
+		else if (metric == SimilarityMetric::NCC)
 		{
 			mPredThresh = 0.6;
 			mPeakThresh = 0.7;
 		}
-		else if (metric == NSSD)
+		else if (metric == SimilarityMetric::NSSD)
 		{
 			mPredThresh = 0.4;
 			mPeakThresh = 0.3;
 		}
-		else if (metric == NXC)
+		else if (metric == SimilarityMetric::NXC)
 		{
 			mPredThresh = 0.8;
 			mPeakThresh = 0.9;
 		}
-		else if (metric == SAD)
+		else if (metric == SimilarityMetric::SAD)
 		{
 			mPredThresh = mTemplateROI.area() * 16;
 			mPeakThresh = mTemplateROI.area() * 13;
 		}
-		else if (metric == SSD)
+		else if (metric == SimilarityMetric::SSD)
 		{
 			mPredThresh = mTemplateROI.area() * 400;
 			mPeakThresh = mTemplateROI.area() * 300;
 		}
-		else if (metric == XC)
+		else if (metric == SimilarityMetric::XC)
 		{
 			mPredThresh = mTemplateROI.area() * 1525;
 			mPeakThresh = mTemplateROI.area() * 1700;
