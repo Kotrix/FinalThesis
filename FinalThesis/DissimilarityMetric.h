@@ -1,10 +1,10 @@
 #pragma once
-#include "SimilarityMetric.h"
+#include "Metric.h"
 
-class HigherBetterMetric : public SimilarityMetric
+class DissimilarityMetric : public Metric
 {
 public:
-	HigherBetterMetric(const String& name, int type) : SimilarityMetric(name, type) {}
+	DissimilarityMetric(const String& name, int type) : Metric(name, type) {}
 
 	/**
 	Find the best match in the similarity map
@@ -14,7 +14,7 @@ public:
 	Point findBestLoc(const Mat& map) const override
 	{
 		Point bestLoc;
-		minMaxLoc(map, nullptr, nullptr, nullptr, &bestLoc);
+		minMaxLoc(map, nullptr, nullptr, &bestLoc, nullptr);
 		return bestLoc;
 	}
 
@@ -26,6 +26,6 @@ public:
 	*/
 	bool isBetter(double value, double threshold) const override
 	{
-		return value > threshold;
+		return value < threshold;
 	}
 };

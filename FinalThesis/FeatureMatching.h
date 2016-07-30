@@ -4,7 +4,7 @@
 /**
 Feature tracking with descriptors matching using FLANN and Brute force algorithms
 */
-class FeatureTracking : public FeaturesMethod
+class FeatureMatching : public FeaturesMethod
 {
 	Ptr<DescriptorMatcher> mMatcher; /**< Pointer to descriptor matcher object */
 	String mMatcherName; /**< Matcher name */
@@ -39,8 +39,8 @@ class FeatureTracking : public FeaturesMethod
 		mMatcher->match(mPrevDescriptors, descriptors, matches);
 
 		//calculate min distance between keypoints
-		double min_dist = 120.0;
-		if (mMatcherName != "ORB") 
+		double min_dist = 200.0;
+		if (mDetectorName != "ORB") 
 		{
 			for (int i = 0; i < mPrevDescriptors.rows; i++)
 			{
@@ -100,7 +100,7 @@ class FeatureTracking : public FeaturesMethod
 	}
 
 public:
-	FeatureTracking(const Mat& first, const String& detector, const String& matcher, int estimation) : FeaturesMethod("FeatureTracking", first, detector, estimation)
+	FeatureMatching(const Mat& first, const String& detector, const String& matcher, int estimation) : FeaturesMethod("FeatureMatching", first, detector, estimation)
 	{
 		mMatcherName = matcher;
 		addToName("_" + mMatcherName);

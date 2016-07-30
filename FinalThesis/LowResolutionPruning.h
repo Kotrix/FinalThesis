@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "MatchingMethod.h"
-#include "SimilarityMetric.h"
+#include "Metric.h"
 #include <opencv2/imgproc.hpp>
 
 class LowResolutionPruning : public MatchingMethod
@@ -19,7 +19,7 @@ class LowResolutionPruning : public MatchingMethod
 	{
 		Mat searchROI = img(mSearchROI);
 		searchROI.copyTo(mPyramid[0]);
-	
+
 		Mat lower;
 		for (int i = 1; i <= mLayers; i++)
 		{
@@ -123,7 +123,7 @@ public:
 		Point tempBestLoc;
 		for (int i = mLayers - 1; i >= 0; i--)
 		{
-			//translate bestLoc to lower pyramid level
+			//scale bestLoc to lower pyramid level
 			bestLoc *= mPyrRatio;
 
 			//set next layer 3x3 search window ROI depending on bestLoc 
@@ -139,14 +139,38 @@ public:
 		}
 
 		//find sub-pixel accuracy based on last search window
-		Point2f subPix = Point2f(0, 0);
-		if (tempBestLoc == Point(1, 1))
-			subPix = mSubPixelEstimator->estimate(result, tempBestLoc);
-		else if (bestLoc.x != 0 && bestLoc.y != 0)
+		int margin = mSubPixelEstimator->getMargin();
+		int peakX = tempBestLoc.x;
+		int peakY = tempBestLoc.y;
+		if (margin > 1 || tempBestLoc != Point(1, 1))
 		{
-			result = mMetric->getMapSpatial(mPyramid[0](Rect(bestLoc - Point(1, 1), mTemplates[0].size() + Size(2, 2))), mTemplates[0]);
-			subPix = mSubPixelEstimator->estimate(result, Point(1, 1));
+			//expand search window
+			int top = margin - tempBestLoc.y; if (top < 0) top = 0;
+			int bottom = -result.rows + 1 + tempBestLoc.y + margin; if (bottom < 0) bottom = 0;
+			int left = margin - tempBestLoc.x; if (left < 0) left = 0;
+			int right = -result.cols + 1 + tempBestLoc.x + margin; if (right < 0) right = 0; 
+			copyMakeBorder(result, result, top, bottom, left, right, BORDER_CONSTANT, Scalar(0));
+
+			//cache
+			Mat temp = mTemplates[0];
+			Mat img = mPyramid[0];
+			Size tempSize = temp.size();
+			Rect ROI = Rect(bestLoc, tempSize);
+			peakX += left;
+			peakY += top;
+
+			//calculate only necessary correlations
+			for (int i = 0; i < top; i++)
+				result.at<float>(i, peakX) = mMetric->calculate(img(ROI + Point(0, -peakY + i)), temp);
+			for (int i = 0; i < bottom; i++)
+				result.at<float>(result.rows - i - 1, peakX) = mMetric->calculate(img(ROI + Point(0, result.rows - 1 - peakY - i)), temp);
+			for (int i = 0; i < left; i++)
+				result.at<float>(peakY, i) = mMetric->calculate(img(ROI + Point(-peakX + i, 0)), temp);
+			for (int i = 0; i < right; i++)
+				result.at<float>(peakY, result.cols - i - 1) = mMetric->calculate(img(ROI + Point(result.cols - 1 - peakX - i, 0)), temp);
 		}
+
+		Point2f subPix = mSubPixelEstimator->estimate(result, Point(peakX, peakY));
 
 		//shift to get displacement
 		bestLoc += mSearchROI.tl() - mTemplateROI.tl();

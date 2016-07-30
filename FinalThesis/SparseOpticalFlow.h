@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "FeaturesMethod.h"
+#include <fstream>
 
 /**
 Class for sparse optical flow
@@ -8,6 +9,7 @@ class SparseOpticalFlow : public FeaturesMethod
 {
 	vector<Point2f> mPrevPoints2f; /**< Previously detected points */
 	int mLayers; /**< Number of layers in optical flow algorithm */
+	ofstream result;
 
 	/**
 	Calculate and update features vector
@@ -17,7 +19,14 @@ class SparseOpticalFlow : public FeaturesMethod
 	{
 		//detect keypoints in image
 		vector<KeyPoint> keyPoints;
+
+		//start timer
+		double mTime = static_cast<double>(getTickCount());
 		mDetector->detect(img, keyPoints, mDetectorMask);
+		//stop timer
+		mTime = (static_cast<double>(getTickCount()) - mTime) / getTickFrequency();
+
+		result << mTime << endl;
 
 		//convert keyPoints to points
 		mPrevPoints2f.resize(keyPoints.size());
@@ -102,7 +111,7 @@ class SparseOpticalFlow : public FeaturesMethod
 
 
 public:
-	SparseOpticalFlow(const Mat& first, const String& detector, int estimation = 0, int layers = 4) : FeaturesMethod("OpticalFlow", first, detector, estimation), mLayers(layers)
+	SparseOpticalFlow(const Mat& first, const String& detector, int estimation = 0, int layers = 4) : FeaturesMethod("OpticalFlow", first, detector, estimation), mLayers(layers), result("result.txt")
 	{
 		//only 8-bit 1-channel supported
 		if (first.type() != CV_8UC1)
@@ -111,6 +120,11 @@ public:
 		KeyPoint::convert(mPrevKeypoints, mPrevPoints2f);
 
 		if (estimation == 2) addToName("_OpenCV");
+	}
+
+	~SparseOpticalFlow()
+	{
+		result.close();
 	}
 
 	/**

@@ -9,25 +9,25 @@ int main(int argc, char** argv)
 {
 	cout << "Speckle velocimetry - Krzysztof Kotowski\n";
 
-	int method = Method::SPIRAL;
+	int method = Method::LRP;
 	bool draw = false;
 	double px2mm = 1.0;
 
 	MethodParams params;
-	params.metric = SimilarityMetric::SAD;
-	params.templRatio = 0.7;
+	params.metric = Metric::NXC;
+	params.templRatio = 0.8;
 	params.maxShift = 0.1;
-	params.layers = 4;
-	params.detector = "Grid";
+	params.layers = 3;
+	params.detector = "FAST";
 	params.estimation = 1;
 	params.matcher = "FlannBased";
 
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen1_05\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen2_1\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen5_0\\*.png";
-	String path = "C:\\Users\\Krzysztof\\Pictures\\realData\\real15mms\\*.png";
-	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen10_2\\*.png";
-	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen-20_0\\*.png";
+	//String path = "C:\\Users\\Krzysztof\\Pictures\\realData\\real15mms\\*.png";
+	String path = "C:\\Users\\Krzysztof\\Pictures\\gen10_2\\*.png";
+	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen10_0\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen-40_0\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen40_3\\*.png";
 	//String path = "0";
@@ -40,7 +40,7 @@ int main(int argc, char** argv)
 	{
 		cout << "Usage : %s <source> <method> (<metric> <templRatio> <maxShift> <layers> <detector> <estimation> <matcher> <draw> <px2mm>)\n", argv[0];
 	}
-	
+
 	if (argc > 1) path = argv[1];
 	if (argc > 2) method = stoi(argv[2]);
 	if (argc > 3) params.metric = stoi(argv[3]);
@@ -92,7 +92,7 @@ int main(int argc, char** argv)
 			sumVelocity += V;
 		}
 
-		if(evaluate) evaluator.evaluate(displacement, frameNumber);
+		if (evaluate) evaluator.evaluate(displacement, frameNumber);
 
 		//display result
 		cout << frameNumber << ". calculated in " << 1000 * time << "ms\n"
@@ -108,7 +108,7 @@ int main(int argc, char** argv)
 		}
 		if (waitKey(1) != -1) break;
 	}
- 
+
 	sumVelocity /= (frameNumber - 1.0);
 	sumTime /= (frameNumber - 1.0);
 	cout << endl << "Average velocity: " << sumVelocity.x << " " << px_mm << "/s";
@@ -117,11 +117,14 @@ int main(int argc, char** argv)
 
 	if (evaluate)
 	{
-		cout << "Error: " << evaluator.getLastError() << endl;
+		auto r = evaluator.getAvgError();
+		cout << "Error: " << evaluator.getAvgError() << endl;
+		cout << sqrt(r.x*r.x + r.y*r.y) << endl;
 		cout << "Avg. time: " << 1000 * sumTime << " ms\n";
 		namedWindow("Error", WINDOW_NORMAL);
 		imshow("Error", evaluator.getPathImg());
 	}
+
 	waitKey();
 
 	return EXIT_SUCCESS;

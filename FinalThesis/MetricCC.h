@@ -1,10 +1,10 @@
 ﻿#pragma once
-#include "HigherBetterMetric.h"
+#include "SimilarityMetric.h"
 
-class MetricCC : public HigherBetterMetric
+class MetricCC : public SimilarityMetric
 {
 public:
-	MetricCC() : HigherBetterMetric("CC", CC) {}
+	MetricCC() : SimilarityMetric("CC", CC) {}
 
 	/**
 	Calculate similarity value for two images of the same size

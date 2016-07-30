@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FeatureTracking.h" />
+    <ClInclude Include="FeatureMatching.h" />
     <ClInclude Include="Evaluator.h" />
     <ClInclude Include="FeaturesMethod.h" />
     <ClInclude Include="FramesGrabber.h" />
@@ -28,9 +28,9 @@
     <ClInclude Include="FramesGrabberCV.h" />
     <ClInclude Include="Gaussian3.h" />
     <ClInclude Include="Gaussian3plus.h" />
-    <ClInclude Include="HigherBetterMetric.h" />
+    <ClInclude Include="SimilarityMetric.h" />
     <ClInclude Include="LaserSpeckleVelocimeter.h" />
-    <ClInclude Include="LowerBetterMetric.h" />
+    <ClInclude Include="DissimilarityMetric.h" />
     <ClInclude Include="MatchingMethod.h" />
     <ClInclude Include="FullSearch.h" />
     <ClInclude Include="FullSearchFFT.h" />
@@ -49,7 +49,7 @@
     <ClInclude Include="MetricSSD.h" />
     <ClInclude Include="MetricXC.h" />
     <ClInclude Include="SparseOpticalFlow.h" />
-    <ClInclude Include="SimilarityMetric.h" />
+    <ClInclude Include="Metric.h" />
     <ClInclude Include="SubPixelEstimator.h" />
     <ClInclude Include="SubPixelEstimatorsFactory.h" />
   </ItemGroup>

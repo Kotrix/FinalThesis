@@ -40,7 +40,11 @@ class MatchingMethod : public Method
 		//calculate ROI for search area
 		borderRatio = borderRatio - mMaxShift;
 		tl = Point(floor(width * borderRatio), floor(height * borderRatio));
+		if (tl.x < 0) tl.x = 0;
+		if (tl.y < 0) tl.y = 0;
 		br = Point(ceil(width * (1.0 - borderRatio)), ceil(height * (1.0 - borderRatio)));
+		if (br.x > width) br.x = width;
+		if (br.y > height) br.y = height;
 		mSearchROI = Rect(tl, br);
 		cout << "Search area set to: " << mSearchROI << endl;
 
@@ -60,10 +64,7 @@ class MatchingMethod : public Method
 	{
 		//assure that maxShift is sufficient to compute sub-pixel estimation
 		double min = cv::min(mMaxShift*width, mMaxShift*height);
-		if (mSubPixelEstimator->getType() == SubPixelEstimator::GAUSS3)
-			CV_Assert(min > 2);
-		else if (mSubPixelEstimator->getType() == SubPixelEstimator::GAUSS5)
-			CV_Assert(min > 4);
+		CV_Assert(min > mSubPixelEstimator->getMargin() * 2);
 
 		//assure that maxShift is not more than limit
 		double maxShiftLimit = 0.25;
@@ -97,7 +98,7 @@ class MatchingMethod : public Method
 	double mMaxShift; /**< Max. shift between consecutive frames */
 	
 protected:
-	Ptr<SimilarityMetric> mMetric; /**< Object of metric to use */
+	Ptr<Metric> mMetric; /**< Object of metric to use */
 	Ptr<SubPixelEstimator> mSubPixelEstimator; /**< Object for sub-pixel accuracy estimation */
 	Rect mTemplateROI; /**< ROI for template */
 	Rect mSearchROI; /**< ROI for search */
@@ -108,7 +109,7 @@ public:
 	explicit MatchingMethod(const String& name, const Mat& first, int metric, double tempRatio, double maxShift) : Method(name), mTemplRatio(tempRatio), mMaxShift(maxShift)
 	{
 		mMetric = MetricsFactory::getMetric(metric);
-		mSubPixelEstimator = SubPixelEstimatorsFactory::getEstimator(SubPixelEstimator::GAUSS3);
+		mSubPixelEstimator = SubPixelEstimatorsFactory::getEstimator(SubPixelEstimator::GAUSS5);
 		addToName("_" + mMetric->getName());
 		initMatching(first);
 	}

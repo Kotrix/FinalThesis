@@ -14,26 +14,28 @@ public:
 	{
 		const int y = bestLoc.y;
 		const int x = bestLoc.x;
-		const float xy2 = 2 * log(corr.at<float>(y, x));
+		const float xy = log(corr.at<float>(y, x));
 		const float ym1 = log(corr.at<float>(y - 1, x));
 		const float xp1 = log(corr.at<float>(y, x + 1));
 		const float yp1 = log(corr.at<float>(y + 1, x));
 		const float xm1 = log(corr.at<float>(y, x - 1));
 
-		float dx = (xm1 - xp1) / (2 * (xm1 - xy2 + xp1));
-		float dy = (ym1 - yp1) / (2 * (ym1 - xy2 + yp1));
+		float dx = (xm1 - xp1) / (2 * (xm1 - 2 * xy + xp1));
+		float dy = (ym1 - yp1) / (2 * (ym1 - 2 * xy + yp1));
 
-		if (dx >= -0.5 && dx <= 0)
-			dx = (dx + dx - 0.5) * 0.5;
+		float dx05, dy05;
+		if (dx < 0)
+			dx05 = (xm1 - xp1) / ((log(corr.at<float>(y, x - 2)) - xm1 - xy + xp1));
 		else
-			dx = (dx + dx + 0.5) * 0.5;
+			dx05 = (xm1 - xp1) / (xm1 - xy - xp1 + (log(corr.at<float>(y, x + 2))));
 
-		if (dy >= -0.5 && dy <= 0)
-			dy = (dy + dy - 0.5) * 0.5;
+		if (dy < 0)
+			dy05 = (ym1 - yp1) / ((log(corr.at<float>(y - 2, x)) - ym1 - xy + yp1));
 		else
-			dy = (dy + dy + 0.5) * 0.5;
+			dy05 = (ym1 - yp1) / (ym1 - xy - yp1 + (log(corr.at<float>(y + 2, x))));
 
-		return Point2f(dx, dy);
+
+		return Point2f((dx + dx05) / 2.0, (dy + dy05) / 2.0);
 	}
 
 	/**
@@ -52,6 +54,6 @@ public:
 	*/
 	int getMargin() const override
 	{
-		return 1;
+		return 2;
 	}
 };

@@ -1,4 +1,4 @@
-﻿/*Factory of correlation methods based on SimilarityMetric class*/
+﻿/*Factory of correlation methods based on Metric class*/
 #pragma once
 #include "MetricSSD.h"
 #include "MetricNSSD.h"
@@ -13,22 +13,22 @@ class MetricsFactory
 {
 public:
 	/**
-	Create and return pointer to specified SimilarityMetric object 
-	@param type				number of metric to use (see SimilarityMetric::METRICS enum)
-	@return					smart OpenCV pointer to initialized SimilarityMetric object
+	Create and return pointer to specified Metric object 
+	@param type				number of metric to use (see Metric::METRICS enum)
+	@return					smart OpenCV pointer to initialized Metric object
 	*/
-   static Ptr<SimilarityMetric> getMetric(int type){
+   static Ptr<Metric> getMetric(int type){
 	  
 	   switch (type)
 	   {
-	   case SimilarityMetric::SSD: return new MetricSSD();
-	   case SimilarityMetric::NSSD: return new MetricNSSD();
-	   case SimilarityMetric::XC: return new MetricXC();
-	   case SimilarityMetric::NXC: return new MetricNXC();
-	   case SimilarityMetric::CC: return new MetricCC();
-	   case SimilarityMetric::NCC: return new MetricNCC();
-	   case SimilarityMetric::SAD: return new MetricSAD();
-	   case SimilarityMetric::MAD: return new MetricMAD();
+	   case Metric::SSD: return new MetricSSD();
+	   case Metric::NSSD: return new MetricNSSD();
+	   case Metric::XC: return new MetricXC();
+	   case Metric::NXC: return new MetricNXC();
+	   case Metric::CC: return new MetricCC();
+	   case Metric::NCC: return new MetricNCC();
+	   case Metric::SAD: return new MetricSAD();
+	   case Metric::MAD: return new MetricMAD();
 	   default: return new MetricSSD();
 	   }
 

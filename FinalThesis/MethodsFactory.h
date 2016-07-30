@@ -4,11 +4,11 @@
 #include "LowResolutionPruning.h"
 #include "SpiralSearch.h"
 #include "SparseOpticalFlow.h"
-#include "FeatureTracking.h"
+#include "FeatureMatching.h"
 
 struct MethodParams
 {
-	int metric = SimilarityMetric::NXC; /**< Metric to use */
+	int metric = Metric::NXC; /**< Metric to use */
 	double templRatio = 0.7; /**< Template to image ratio */
 	double maxShift = 0.1; /**< Maximum expected image shift in the next frame */
 	int layers = 3; /**< Number of layers for low resolution pruning and optical flow */
@@ -36,7 +36,7 @@ public:
 		case Method::LRP : return new LowResolutionPruning(first, params.metric, params.templRatio, params.maxShift, params.layers);
 		case Method::SPIRAL : return new SpiralSearch(first, params.metric, params.templRatio, params.maxShift);
 		case Method::OPTICAL_FLOW : return new SparseOpticalFlow(first, params.detector, params.estimation, params.layers);
-		case Method::FEATURE_MATCHING : return new FeatureTracking(first, params.detector, params.matcher, params.estimation);
+		case Method::FEATURE_MATCHING : return new FeatureMatching(first, params.detector, params.matcher, params.estimation);
 		default: return new FullSearchSpatial(first, params.metric, params.templRatio, params.maxShift);
 		}
 

@@ -91,12 +91,12 @@ public:
 		for (int i = 0; i < mGroundTruth.size() - 1; i++)
 		{
 			//drawMarker(image, mScale * (mGroundTruth[i] - tl),  Scalar(0, 0, 255), MARKER_DIAMOND, 5);
-			line(image, mScale * (mGroundTruth[i] - tl), mScale * (mGroundTruth[i + 1] - tl), Scalar(0, 0, 255), mScale);
+			line(image, mScale * (mGroundTruth[i] - tl), mScale * (mGroundTruth[i + 1] - tl), Scalar(0, 0, 255), mScale * 15);
 		}
 		for (int i = 0; i < mResults.size() - 1; i++)
 		{
 			//drawMarker(image, mScale * (mResults[i] - tl), Scalar(0, 255, 0), MARKER_DIAMOND, 5);
-			line(image, mScale * (mResults[i] - tl), mScale * (mResults[i + 1] - tl), Scalar(0, 255, 0), mScale);
+			line(image, mScale * (mResults[i] - tl), mScale * (mResults[i + 1] - tl), Scalar(0, 255, 0), mScale * 5);
 		}
 
 		return image;

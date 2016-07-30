@@ -26,6 +26,8 @@ public:
 		//copy frame to template
 		frame(mTemplateROI).copyTo(mTemplate);
 
-		return getBestLoc(result);
+		Point3f r = getBestLoc(result);
+
+		return r;
 	}
 };

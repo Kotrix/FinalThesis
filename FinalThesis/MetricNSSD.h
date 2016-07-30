@@ -1,10 +1,10 @@
 ﻿#pragma once
-#include "LowerBetterMetric.h"
+#include "DissimilarityMetric.h"
 
-class MetricNSSD : public LowerBetterMetric
+class MetricNSSD : public DissimilarityMetric
 {
 public:
-	MetricNSSD() : LowerBetterMetric("NSSD", NSSD) {}
+	MetricNSSD() : DissimilarityMetric("NSSD", NSSD) {}
 
 	/**
 	Calculate similarity value for two images of the same size

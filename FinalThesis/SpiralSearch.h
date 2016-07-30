@@ -14,7 +14,7 @@ class SpiralSearch : public MatchingMethod
 	const Point RIGHT = Point(1, 0);
 	const Point DOWN = Point(0, 1);
 	const Point LEFT = Point(-1, 0);
-	const vector<Point> DIRECTIONS = vector<Point>{ UP, RIGHT, DOWN, LEFT };
+	const vector<Point> DIRECTIONS = vector<Point>{ UP, RIGHT, DOWN, LEFT, 2*UP, 2*RIGHT, 2*DOWN, 2*LEFT };
 
 	/**
 	Set constant thresholds for peak finding process.
@@ -23,42 +23,42 @@ class SpiralSearch : public MatchingMethod
 	*/
 	void setThresholds(int metric)
 	{
-		if (metric == SimilarityMetric::CC)
+		if (metric == Metric::CC)
 		{
 			mPredThresh = mTemplateROI.area() * 500;
 			mPeakThresh = mTemplateROI.area() * 400;
 		}
-		else if (metric == SimilarityMetric::MAD)
+		else if (metric == Metric::MAD)
 		{
 			mPredThresh = 16;
 			mPeakThresh = 13;
 		}
-		else if (metric == SimilarityMetric::NCC)
+		else if (metric == Metric::NCC)
 		{
 			mPredThresh = 0.6;
 			mPeakThresh = 0.7;
 		}
-		else if (metric == SimilarityMetric::NSSD)
+		else if (metric == Metric::NSSD)
 		{
 			mPredThresh = 0.4;
 			mPeakThresh = 0.3;
 		}
-		else if (metric == SimilarityMetric::NXC)
+		else if (metric == Metric::NXC)
 		{
 			mPredThresh = 0.8;
 			mPeakThresh = 0.9;
 		}
-		else if (metric == SimilarityMetric::SAD)
+		else if (metric == Metric::SAD)
 		{
 			mPredThresh = mTemplateROI.area() * 16;
 			mPeakThresh = mTemplateROI.area() * 13;
 		}
-		else if (metric == SimilarityMetric::SSD)
+		else if (metric == Metric::SSD)
 		{
 			mPredThresh = mTemplateROI.area() * 400;
 			mPeakThresh = mTemplateROI.area() * 300;
 		}
-		else if (metric == SimilarityMetric::XC)
+		else if (metric == Metric::XC)
 		{
 			mPredThresh = mTemplateROI.area() * 1525;
 			mPeakThresh = mTemplateROI.area() * 1700;
@@ -149,7 +149,7 @@ public:
 				//find maximum value in cross-neighbourhood
 				status = -1;
 				double max = value;
-				for (int i = 0; i < 4; i++)
+				for (int i = 0; i < 8; i++)
 				{
 					Point nextShift = shift + DIRECTIONS[i];
 					if (mCache.at<float>(ROItl + nextShift) < 0 && abs(nextShift.x) < mMaxTranslation.x && abs(nextShift.y) < mMaxTranslation.y)
@@ -172,7 +172,7 @@ public:
 				value = max;
 			}
 		}
-
+	
 		if (mDrawResult) mCache.copyTo(mResultImg);
 
 		//update template

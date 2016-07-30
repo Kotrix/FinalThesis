@@ -57,6 +57,7 @@ protected:
 	double mScale; /**< Scaling factor for smaller images */
 	bool mNeedScaling; /**< Flag controlling scaling */
 	int mEstimationType; /**< 0 - allPoints, 1 - RANSAC, 2 - original OpenCV function */
+	String mDetectorName;
 
 	/**
 	Find rigid transformation matrix for the next frame
@@ -261,17 +262,18 @@ public:
 			resize(mPrevFrame, mPrevFrame, mPrevSize, 0., 0., INTER_AREA);
 		}
 
+		mDetectorName = detector;
 		//create features detector object pointer
 		if (detector == "Grid")
 			mDetector = makePtr<FeaturesGrid>(18);
 		else if (detector == "Agast")
-			mDetector = AgastFeatureDetector::create();
+			mDetector = AgastFeatureDetector::create(80);
 		else if (detector == "AKAZE")
 			mDetector = AKAZE::create();
 		else if (detector == "BRISK")
 			mDetector = BRISK::create();
 		else if (detector == "FAST")
-			mDetector = FastFeatureDetector::create();
+			mDetector = FastFeatureDetector::create(50);
 		else if (detector == "GFTT")
 			mDetector = GFTTDetector::create(mPrevSize.area() / 2048, 0.1, mPrevSize.width / 32);
 		else if (detector == "KAZE")
@@ -281,7 +283,7 @@ public:
 		else if (detector == "ORB")
 			mDetector = ORB::create(mPrevSize.area() / 512);
 		else if (detector == "SURF")
-			mDetector = xfeatures2d::SURF::create(1500, 4, 3);
+			mDetector = xfeatures2d::SURF::create(100, 4, 3);
 		else if (detector == "SIFT")
 			mDetector = xfeatures2d::SIFT::create(mPrevSize.area() / 1024);
 		
