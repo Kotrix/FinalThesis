@@ -9,7 +9,7 @@ int main(int argc, char** argv)
 {
 	cout << "Speckle velocimetry - Krzysztof Kotowski\n";
 
-	int method = Method::LRP;
+	int method = Method::OPTICAL_FLOW;
 	bool draw = false;
 	double px2mm = 1.0;
 
@@ -19,12 +19,12 @@ int main(int argc, char** argv)
 	params.maxShift = 0.1;
 	params.layers = 3;
 	params.detector = "FAST";
-	params.estimation = 1;
+	params.RANSAC = 1;
 	params.matcher = "FlannBased";
 
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen1_05\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen2_1\\*.png";
-	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen5_0\\*.png";
+	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen5_5\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\realData\\real15mms\\*.png";
 	String path = "C:\\Users\\Krzysztof\\Pictures\\gen10_2\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen10_0\\*.png";
@@ -38,7 +38,7 @@ int main(int argc, char** argv)
 	*/
 	if (argc < 11)
 	{
-		cout << "Usage : %s <source> <method> (<metric> <templRatio> <maxShift> <layers> <detector> <estimation> <matcher> <draw> <px2mm>)\n", argv[0];
+		cout << "Usage : %s <source> <method> (<metric> <templRatio> <maxShift> <layers> <detector> <RANSAC> <matcher> <draw> <px2mm>)\n", argv[0];
 	}
 
 	if (argc > 1) path = argv[1];
@@ -48,7 +48,7 @@ int main(int argc, char** argv)
 	if (argc > 5) params.maxShift = stod(argv[5]);
 	if (argc > 6) params.layers = stoi(argv[6]);
 	if (argc > 7) params.detector = argv[7];
-	if (argc > 8) params.estimation = stoi(argv[8]);
+	if (argc > 8) params.RANSAC = stoi(argv[8]);
 	if (argc > 9) params.matcher = argv[9];
 	if (argc > 10) draw = stoi(argv[10]);
 	if (argc > 11) px2mm = stod(argv[11]);
@@ -115,15 +115,28 @@ int main(int argc, char** argv)
 	if (sumVelocity.y > 0) cout << "  |  " << sumVelocity.y << " deg/s";
 	cout << endl;
 
+	//get directory name from path
+	size_t pos = path.find_last_of('\\');
+	if (pos == string::npos) pos = path.find_last_of('/');
+	if (pos == string::npos) CV_Error(CV_StsBadArg, "Directory not found\n");
+	string groundPath(path);
+	groundPath.resize(pos + 1);
+
+	ofstream result(groundPath + "res" + to_string(method) + to_string(params.metric) + to_string((int)(params.templRatio * 100)) + to_string(int(params.maxShift * 100)) + to_string(params.layers) + params.detector + to_string(params.RANSAC) + params.matcher + ".txt");
+
 	if (evaluate)
 	{
 		auto r = evaluator.getAvgError();
-		cout << "Error: " << evaluator.getAvgError() << endl;
-		cout << sqrt(r.x*r.x + r.y*r.y) << endl;
+		cout << "Avg. error: " << evaluator.getAvgError() << endl;
+		cout << "Avg. error in pixels: " << sqrt(r.x*r.x + r.y*r.y) << endl;
 		cout << "Avg. time: " << 1000 * sumTime << " ms\n";
+		result << "Avg. error: " << evaluator.getAvgError() << endl;
+		result << "Avg. error in pixels: " << sqrt(r.x*r.x + r.y*r.y) << endl;
+		result << "Avg. time: " << 1000 * sumTime << " ms\n";
 		namedWindow("Error", WINDOW_NORMAL);
 		imshow("Error", evaluator.getPathImg());
 	}
+	result.close();
 
 	waitKey();
 

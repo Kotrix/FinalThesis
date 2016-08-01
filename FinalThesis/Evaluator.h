@@ -28,7 +28,7 @@ public:
 		if (pos == string::npos) CV_Error(CV_StsBadArg, "Directory not found\n");
 		string groundPath(path);
 		groundPath.resize(pos);
-		groundPath += "\\moves.txt";
+		groundPath += "//moves.txt";
 
 		//read ground truth file to vector
 		ifstream groundFile(groundPath);

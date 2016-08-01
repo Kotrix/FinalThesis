@@ -32,7 +32,7 @@ public:
 		FULL_FFT, FULL_SPATIAL, LRP, SPIRAL, OPTICAL_FLOW, FEATURE_MATCHING
 	};
 
-	explicit Method(const String& name) : mMethodName(name), mDrawResult(false), mResultImg() {}
+	explicit Method(const String& name) : mMethodName(name), mDrawResult(false), mResultImg(Mat()) {}
 
 	virtual ~Method() {}
 

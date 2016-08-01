@@ -37,12 +37,22 @@ class FeatureMatching : public FeaturesMethod
 		//match descriptors to previous image
 		vector<DMatch> matches;
 		mMatcher->match(mPrevDescriptors, descriptors, matches);
+		int rows = mPrevDescriptors.rows;
 
 		//calculate min distance between keypoints
 		double min_dist = 200.0;
-		if (mDetectorName != "ORB") 
+		if (mDetectorName == "ORB" || mDetectorName == "AKAZE" || mDetectorName == "BRISK")
 		{
-			for (int i = 0; i < mPrevDescriptors.rows; i++)
+			min_dist = 0;
+			for (int i = 0; i < rows; i++)
+			{
+				min_dist += matches[i].distance;
+			}
+			min_dist /= static_cast<double>(rows);
+		}
+		else
+		{
+			for (int i = 0; i < rows; i++)
 			{
 				double dist = matches[i].distance;
 				if (dist < min_dist) min_dist = dist;
@@ -52,7 +62,7 @@ class FeatureMatching : public FeaturesMethod
 			
 		//take only good matches
 		vector< DMatch > good_matches;
-		for (int i = 0; i < mPrevDescriptors.rows; i++)
+		for (int i = 0; i < rows; i++)
 		{
 			if (matches[i].distance < min_dist)
 			{

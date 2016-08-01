@@ -129,7 +129,7 @@ public:
 			if (output.type() != mType)
 				CV_Error(Error::StsUnmatchedFormats, "Consecutive images must have the same data type");
 		}
-
+		
 		cout << "End of sequence. Press any key\n";
 		return false;
 	}

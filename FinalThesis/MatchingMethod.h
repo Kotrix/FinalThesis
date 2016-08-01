@@ -38,13 +38,14 @@ class MatchingMethod : public Method
 		cout << "Template area set to: " << mTemplateROI << endl;
 
 		//calculate ROI for search area
+		int margin = mSubPixelEstimator->getMargin();
 		borderRatio = borderRatio - mMaxShift;
 		tl = Point(floor(width * borderRatio), floor(height * borderRatio));
-		if (tl.x < 0) tl.x = 0;
-		if (tl.y < 0) tl.y = 0;
+		if (tl.x < margin) tl.x = margin;
+		if (tl.y < margin) tl.y = margin;
 		br = Point(ceil(width * (1.0 - borderRatio)), ceil(height * (1.0 - borderRatio)));
-		if (br.x > width) br.x = width;
-		if (br.y > height) br.y = height;
+		if (br.x > width - margin) br.x = width - margin;
+		if (br.y > height - margin) br.y = height - margin;
 		mSearchROI = Rect(tl, br);
 		cout << "Search area set to: " << mSearchROI << endl;
 

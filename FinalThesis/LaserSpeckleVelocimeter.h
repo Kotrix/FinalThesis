@@ -52,6 +52,12 @@ public:
 	Point3f getDisplacement() const { return mDisplacement; }
 
 	/**
+	Get method name
+	@return				mehod name
+	*/
+	String getMehodName() const { return mMethod->getName(); }
+
+	/**
 	Get measured velocity
 	@return				measured velocity
 	*/

@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "SubPixelEstimator.h"
 
-class Gaussian3plus : public SubPixelEstimator
+class Gaussian5 : public SubPixelEstimator
 {
 public:
 	/**

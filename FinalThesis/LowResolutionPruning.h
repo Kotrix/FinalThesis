@@ -108,9 +108,10 @@ public:
 	*/
 	Point3f getDisplacement(const Mat& frame) override
 	{
+		/*
+		Full-search on the lowest level of pyramid
+		*/
 		updatePyramid(frame);
-
-		//find approximation on the lowest level of pyramid
 		Mat result = mMetric->getMapSpatial(mPyramid[mLayers], mTemplates[mLayers]);
 		Point bestLoc = mMetric->findBestLoc(result);
 
@@ -119,7 +120,9 @@ public:
 			result.copyTo(mResultImg);
 		}
 
-		//coarse to fine
+		/*
+		Coarse to fine
+		*/
 		Point tempBestLoc;
 		for (int i = mLayers - 1; i >= 0; i--)
 		{
@@ -138,10 +141,14 @@ public:
 			bestLoc += tempBestLoc + ROIshift;
 		}
 
-		//find sub-pixel accuracy based on last search window
+		/*
+		Find sub-pixel accuracy
+		*/
 		int margin = mSubPixelEstimator->getMargin();
 		int peakX = tempBestLoc.x;
 		int peakY = tempBestLoc.y;
+
+		//fill missing correlation values needed for sub-pixel estimation
 		if (margin > 1 || tempBestLoc != Point(1, 1))
 		{
 			//expand search window

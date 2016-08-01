@@ -267,23 +267,19 @@ public:
 		if (detector == "Grid")
 			mDetector = makePtr<FeaturesGrid>(18);
 		else if (detector == "Agast")
-			mDetector = AgastFeatureDetector::create(80);
+			mDetector = AgastFeatureDetector::create(49);
 		else if (detector == "AKAZE")
-			mDetector = AKAZE::create();
+			mDetector = AKAZE::create(5, 0, 3, 0.009);
 		else if (detector == "BRISK")
-			mDetector = BRISK::create();
+			mDetector = BRISK::create(81);
 		else if (detector == "FAST")
-			mDetector = FastFeatureDetector::create(50);
+			mDetector = FastFeatureDetector::create(51);
 		else if (detector == "GFTT")
-			mDetector = GFTTDetector::create(mPrevSize.area() / 2048, 0.1, mPrevSize.width / 32);
-		else if (detector == "KAZE")
-			mDetector = KAZE::create();
-		else if (detector == "MSER")
-			mDetector = MSER::create();
+			mDetector = GFTTDetector::create(mPrevSize.area() / 1380, 0.001, mPrevSize.width / 32);
 		else if (detector == "ORB")
-			mDetector = ORB::create(mPrevSize.area() / 512);
+			mDetector = ORB::create(mPrevSize.area() / 1380);
 		else if (detector == "SURF")
-			mDetector = xfeatures2d::SURF::create(100, 4, 3);
+			mDetector = xfeatures2d::SURF::create(3350);
 		else if (detector == "SIFT")
 			mDetector = xfeatures2d::SIFT::create(mPrevSize.area() / 1024);
 		

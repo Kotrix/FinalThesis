@@ -12,7 +12,7 @@ protected:
 	@param map			similarity map
 	@return				translation
 	*/
-	Point3f getBestLoc(const Mat& map) const
+	Point3f getBestLoc(const Mat& map)
 	{
 		if (mDrawResult) map.copyTo(mResultImg);
 

@@ -27,7 +27,8 @@
     <ClInclude Include="FramesGrabberSeq.h" />
     <ClInclude Include="FramesGrabberCV.h" />
     <ClInclude Include="Gaussian3.h" />
-    <ClInclude Include="Gaussian3plus.h" />
+    <ClInclude Include="Gaussian5.h" />
+    <ClInclude Include="ModifiedSpiralSearch.h" />
     <ClInclude Include="SimilarityMetric.h" />
     <ClInclude Include="LaserSpeckleVelocimeter.h" />
     <ClInclude Include="DissimilarityMetric.h" />
@@ -54,6 +55,7 @@
     <ClInclude Include="SubPixelEstimatorsFactory.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="generateResults.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

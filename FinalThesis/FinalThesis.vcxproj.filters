@@ -111,9 +111,6 @@
     <ClInclude Include="FeaturesMethod.h">
       <Filter>FeaturesMethods</Filter>
     </ClInclude>
-    <ClInclude Include="Gaussian3plus.h">
-      <Filter>SubpixelEstimators</Filter>
-    </ClInclude>
     <ClInclude Include="SparseOpticalFlow.h">
       <Filter>FeaturesMethods</Filter>
     </ClInclude>
@@ -129,9 +126,18 @@
     <ClInclude Include="DissimilarityMetric.h">
       <Filter>SimilarityMetrics</Filter>
     </ClInclude>
+    <ClInclude Include="ModifiedSpiralSearch.h">
+      <Filter>MatchingMethods</Filter>
+    </ClInclude>
+    <ClInclude Include="Gaussian5.h">
+      <Filter>SubpixelEstimators</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="generateResults.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -10,6 +10,8 @@ class SparseOpticalFlow : public FeaturesMethod
 	vector<Point2f> mPrevPoints2f; /**< Previously detected points */
 	int mLayers; /**< Number of layers in optical flow algorithm */
 	ofstream result;
+	double sumDetectTime = 0;
+	int frames = 0;
 
 	/**
 	Calculate and update features vector
@@ -25,8 +27,8 @@ class SparseOpticalFlow : public FeaturesMethod
 		mDetector->detect(img, keyPoints, mDetectorMask);
 		//stop timer
 		mTime = (static_cast<double>(getTickCount()) - mTime) / getTickFrequency();
-
-		result << mTime << endl;
+		sumDetectTime += mTime;
+		frames++;
 
 		//convert keyPoints to points
 		mPrevPoints2f.resize(keyPoints.size());
@@ -34,11 +36,11 @@ class SparseOpticalFlow : public FeaturesMethod
 			mPrevPoints2f[i] = keyPoints[i].pt;
 
 		//add subpixel accuracy if needed
-		/*if (mDetectorName == "GFTT")
+		if (mDetectorName == "GFTT")
 		{
 		cornerSubPix(img, mPrevPoints2f, Size(3, 3), Size(-1, -1),
 		TermCriteria(TermCriteria::MAX_ITER | TermCriteria::EPS, 30, 0.01));
-		}*/
+		}
 	}
 
 	/**
@@ -111,8 +113,10 @@ class SparseOpticalFlow : public FeaturesMethod
 
 
 public:
-	SparseOpticalFlow(const Mat& first, const String& detector, int estimation = 0, int layers = 4) : FeaturesMethod("OpticalFlow", first, detector, estimation), mLayers(layers), result("result.txt")
+	SparseOpticalFlow(const Mat& first, const String& detector, int estimation = 0, int layers = 4) : FeaturesMethod("OpticalFlow", first, detector, estimation), mLayers(layers)
 	{
+		result.open(detector + ".csv");
+
 		//only 8-bit 1-channel supported
 		if (first.type() != CV_8UC1)
 			CV_Error(Error::StsUnsupportedFormat, "Input images must have 8UC1 type");
@@ -124,6 +128,7 @@ public:
 
 	~SparseOpticalFlow()
 	{
+		result << sumDetectTime / (frames - 1.0);
 		result.close();
 	}
 
