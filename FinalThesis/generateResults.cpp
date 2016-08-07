@@ -26,31 +26,23 @@ int gen(int argc, char** argv)
 	String mainPath = "C:\\Users\\Krzysztof\\Downloads\\data";
 	if (argc > 1) mainPath = argv[1];
 
-	String path = mainPath + "\\gen10_2\\*.png";
+	String path = mainPath + "\\gen10_2_128\\*.png";
 
 	/*
 	Different metrics for full search spatial and FFT
 	*/
 	//ofstream metrics("metrics.csv");
-	//metrics << "Metric;FFT;Spatial;LRP;Spiral;Acc\n";
+	//metrics << "Metric;FFT;FFT_Acc;Spatial;Spatial_Acc;LRP;LRP_Acc;Spiral;Spiral_Acc\n";
 
-	//for (int i = 0; i <= Metric::MAD; i++)
+	//for (int i = 0; i < Metric::MAD; i++)
 	//{
 	//	params.metric = i;
-	//	if (i != Metric::ZXC && i != Metric::ZNXC)
-	//	{
-	//		metrics << i << ";";
-	//	}
+	//	metrics << i << ";";
 	//	for (int j = 0; j <= Method::SPIRAL; j++)
 	//	{
-	//		if (i == Metric::ZXC || i == Metric::ZNXC)
-	//		{
-	//			break;
-	//		}
-
 	//		if ((i == Metric::SAD || i == Metric::MAD) && j == 0)
 	//		{
-	//			metrics << 0 << ";";
+	//			metrics << 0 << ";" << 0 << ";";
 	//			continue;
 	//		}
 
@@ -86,84 +78,20 @@ int gen(int argc, char** argv)
 
 	//		auto r = evaluator.getAvgError();
 	//		metrics << 1000 * sumTime << ";";
-	//		if (j == Method::SPIRAL) metrics << sqrt(r.x*r.x + r.y*r.y);
+	//		metrics << sqrt(r.x*r.x + r.y*r.y) << ";";
 	//	}
 
-	//	if (i != Metric::ZXC && i != Metric::ZNXC)
-	//	{
-	//		metrics << endl;
-	//	}
+	//	metrics << endl;
 	//}
 	//metrics.close();
 
 	/*
-	Different template sizes and search areas for FFT NXC
+	Different template sizes for NXC
 	*/
-	params.metric = Metric::NXC;
-	ofstream templates("templatesNXC.csv");
-	for (auto i = 0.05; i <= 0.1; i += 0.01)
-	{
-		templates << ";" << i;
-	}
-	templates << endl;
-
-	for (auto i = 0.5; i <= 0.9; i += 0.01)
-	{
-		params.templRatio = i;
-		templates << i;
-		for (auto j = 0.05; j <= 0.3; j += 0.01)
-		{
-			if (i + j >= 1.0)
-			{
-				templates << ";";
-				continue;
-			}
-
-			params.maxShift = j;
-			LaserSpeckleVelocimeter LSV(path, j, params, px2mm, draw);
-
-			Evaluator evaluator(path);
-
-			double sumTime = 0;
-			uint64 frameNumber = 0;
-
-			for (;;)
-			{
-				Mat frame;
-				if (!LSV.nextMeasurement(frame)) break;
-
-				auto V = LSV.getVelocity();
-				auto displacement = LSV.getDisplacement();
-				frameNumber = LSV.getFrameNumber();
-				auto time = LSV.getTime();
-
-				//accumulate results
-				if (frameNumber > 1)
-				{
-					sumTime += time;
-				}
-
-				evaluator.evaluate(displacement, frameNumber);
-
-				if (waitKey(1) != -1) break;
-			}
-
-			sumTime /= (frameNumber - 1.0);
-
-			auto r = evaluator.getAvgError();
-			templates << ";" << sqrt(r.x*r.x + r.y*r.y);
-		}
-		templates << endl;
-	}
-	templates.close();
-
-	///*
-	//Different template sizes for NXC
-	//*/
 	//params.metric = Metric::NXC;
 	//ofstream templates("templatesNXC.csv");
 	//templates << "TemplRatio;FFT;LRP;Spiral;Acc\n";
-	//for (auto i = 0.5; i <= 0.81; i += 0.05)
+	//for (auto i = 0.4; i < 0.801; i += 0.01)
 	//{
 	//	params.templRatio = i;
 	//	templates << i << ";";
@@ -453,7 +381,7 @@ int gen(int argc, char** argv)
 	//*/
 	//params.metric = Metric::NXC;
 	//ofstream noise("noise.csv");
-	//noise << "StdDev;FFT;LRP;Spiral;Acc;Flow;Flow_Acc;Matching;Match_Acc\n";
+	//noise << "StdDev;FFT;FFT_Acc;LRP;LRP_Acc;Spiral;Spiral_Acc;Flow;Flow_Acc;Matching;Match_Acc\n";
 	//for (auto i = 0; i < 6; i++)
 	//{
 	//	switch (i)
@@ -467,7 +395,7 @@ int gen(int argc, char** argv)
 	//	}
 	//	noise << ";";
 
-	//	for (int j = 0; j <= Method::FEATURE_MATCHING; j++)
+	//	for (int j = Method::LRP; j <= Method::LRP; j++)
 	//	{
 	//		params.detector = "FAST";
 	//		if (j == Method::FULL_SPATIAL) continue;
@@ -505,7 +433,7 @@ int gen(int argc, char** argv)
 
 	//		auto r = evaluator.getAvgError();
 	//		noise << 1000 * sumTime << ";";
-	//		if (j >= Method::SPIRAL) noise << sqrt(r.x*r.x + r.y*r.y) << ";";
+	//		noise << sqrt(r.x*r.x + r.y*r.y) << ";";
 	//	}
 	//	noise << endl;
 	//}
@@ -640,6 +568,118 @@ int gen(int argc, char** argv)
 	//	featuresize << endl;
 	//}
 	//featuresize.close();
+
+	///*
+	//Different images sizes for features matching
+	//*/
+	//ofstream imageSize("imageSize.csv");
+	//imageSize << "Size;FFT;FFT_Acc;LRP;LRP_Acc;Spiral;Spiral_Acc;Flow_Speed;Flow_Acc;Brute_Matching_Speed;Brute_Matching_Acc\n";
+	//for (auto i = 0; i < 5; i++)
+	//{
+	//	switch (i)
+	//	{
+	//	case 0: {path = mainPath + "\\gen10_2_160\\*.png"; imageSize << 160; break; }
+	//	case 1: {path = mainPath + "\\gen10_2_256\\*.png"; imageSize << 256; break; }
+	//	case 2: {path = mainPath + "\\gen10_2_400\\*.png"; imageSize << 400; break; }
+	//	case 3: {path = mainPath + "\\gen10_2\\*.png"; imageSize << 512; break; }
+	//	case 4: {path = mainPath + "\\gen10_2_768\\*.png"; imageSize << 768; break; }
+	//	}
+	//	imageSize << ";";
+
+	//	for (int j = 0; j <= Method::SPIRAL; j++)
+	//	{
+	//		params.detector = "FAST";
+	//		if (j == Method::FULL_SPATIAL) continue;
+	//		if (j == Method::FEATURE_MATCHING) params.detector = "ORB";
+
+	//		LaserSpeckleVelocimeter LSV(path, j, params, px2mm, draw);
+
+	//		Evaluator evaluator(path);
+
+	//		double sumTime = 0;
+	//		uint64 frameNumber = 0;
+
+	//		for (;;)
+	//		{
+	//			Mat frame;
+	//			if (!LSV.nextMeasurement(frame)) break;
+
+	//			auto V = LSV.getVelocity();
+	//			auto displacement = LSV.getDisplacement();
+	//			frameNumber = LSV.getFrameNumber();
+	//			auto time = LSV.getTime();
+
+	//			//accumulate results
+	//			if (frameNumber > 2)
+	//			{
+	//				sumTime += time;
+	//			}
+
+	//			evaluator.evaluate(displacement, frameNumber);
+
+	//			if (waitKey(1) != -1) break;
+	//		}
+
+	//		sumTime /= (frameNumber - 2.0);
+
+	//		auto r = evaluator.getAvgError();
+	//		imageSize << 1000 * sumTime << ";";
+	//		imageSize << sqrt(r.x*r.x + r.y*r.y) << ";";
+	//	}
+	//	imageSize << endl;
+	//}
+	//imageSize.close();
+
+	/*
+	Different images sizes for features matching
+	*/
+	ofstream frameSize("frameSize.csv");
+	frameSize << "Size;FFT;FFT_Acc;LRP;LRP_Acc;Spiral;Spiral_Acc\n";
+	for (auto i = 80; i <= 260; i += 10)
+	{
+		frameSize << i << ";";
+
+		for (int j = 0; j <= Method::SPIRAL; j++)
+		{
+			if (j == Method::FULL_SPATIAL) continue;
+
+			LaserSpeckleVelocimeter LSV(path, j, params, px2mm, draw;
+
+			Evaluator evaluator(path);
+
+			double sumTime = 0;
+			uint64 frameNumber = 0;
+
+			for (;;)
+			{
+				Mat frame;
+				if (!LSV.nextMeasurement(frame)) break;
+
+				auto V = LSV.getVelocity();
+				auto displacement = LSV.getDisplacement();
+				frameNumber = LSV.getFrameNumber();
+				auto time = LSV.getTime();
+
+				//accumulate results
+				if (frameNumber > 2)
+				{
+					sumTime += time;
+				}
+
+				evaluator.evaluate(displacement, frameNumber);
+
+				if (waitKey(1) != -1) break;
+			}
+
+			sumTime /= (frameNumber - 2.0);
+
+			auto r = evaluator.getAvgError();
+			frameSize << 1000 * sumTime << ";";
+			frameSize << sqrt(r.x*r.x + r.y*r.y) << ";";
+		}
+		frameSize << endl;
+	}
+	frameSize.close();
 
 	return EXIT_SUCCESS;
 }
