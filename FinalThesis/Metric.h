@@ -14,7 +14,7 @@ public:
 	*/
 	enum METRICS
 	{
-		SSD, NSSD, XC, NXC, CC, NCC, SAD, MAD
+		SSD, NSSD, XC, NXC, ZXC, ZNXC, SAD, MAD
 	};
 
 	Metric(const String& name, int type) : mName(name), mType(type), mSimilarityMap() {}
@@ -26,7 +26,14 @@ public:
 	@param temp			template
 	@return				similarity value
 	*/
-	virtual double calculate(const Mat& img, const Mat& temp) const = 0;
+	virtual float calculate(const Mat& img, const Mat& temp) = 0;
+
+	/**
+	Some metric have cache data for faster computation
+	Cache needs to be reloaded every time when template is changing
+	@param temp			new template
+	*/
+	virtual void reloadCache(const Mat& temp) {};
 
 	/**
 	Find the best match in the similarity map
@@ -51,7 +58,7 @@ public:
 	*/
 	Mat& getMapSpatial(const Mat& img, const Mat& temp)
 	{
-		//init similarity map only if needed
+		//reallocate memory for similarity map only if needed
 		Size resultSize = img.size() - temp.size() + Size(1, 1);
 		if (mSimilarityMap.size() != resultSize)
 			mSimilarityMap = Mat(resultSize, CV_32F);
@@ -60,7 +67,7 @@ public:
 		{
 			for (int x = 0; x < resultSize.width; x++)
 			{
-				mSimilarityMap.at<float>(y, x) = static_cast<float>(calculate(img(Rect(x, y, temp.cols, temp.rows)), temp));
+				mSimilarityMap.at<float>(y, x) = calculate(img(Rect(x, y, temp.cols, temp.rows)), temp);
 			}
 		}
 		return mSimilarityMap;

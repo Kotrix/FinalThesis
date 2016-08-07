@@ -20,8 +20,8 @@ public:
 		const float yp1 = log(corr.at<float>(y + 1, x));
 		const float xm1 = log(corr.at<float>(y, x - 1));
 
-		float dx = (xm1 - xp1) / (2 * (xm1 - 2 * xy + xp1));
-		float dy = (ym1 - yp1) / (2 * (ym1 - 2 * xy + yp1));
+		const float dx = (xm1 - xp1) / (2 * (xm1 - 2 * xy + xp1));
+		const float dy = (ym1 - yp1) / (2 * (ym1 - 2 * xy + yp1));
 
 		float dx05, dy05;
 		if (dx < 0)
@@ -34,8 +34,7 @@ public:
 		else
 			dy05 = (ym1 - yp1) / (ym1 - xy - yp1 + (log(corr.at<float>(y + 2, x))));
 
-
-		return Point2f((dx + dx05) / 2.0, (dy + dy05) / 2.0);
+		return Point2f((dx + dx05) * 0.5, (dy + dy05) * 0.5);
 	}
 
 	/**

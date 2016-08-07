@@ -10,8 +10,8 @@ using namespace std;
 
 class Evaluator
 {
-	vector<Point2f> mGroundTruth;
-	vector<Point2f> mResults;
+	vector<Point3f> mGroundTruth;
+	vector<Point3f> mResults;
 	int mGroundTruthSize;
 	int mScale;
 	Point3f mAvgError;
@@ -49,16 +49,26 @@ public:
 				else
 				{
 					pos = line.find(',');
-
 					string x_string(line);
 					x_string.resize(pos);
 					double x_val = stod(x_string);
+					line.erase(0, pos + 1);
 
+					pos = line.find(',');
 					string y_string(line);
-					y_string.erase(0, pos + 1);
+					if (pos != string::npos)
+					{
+						y_string.resize(pos);
+						line.erase(0, pos + 1);
+					}
+					else
+						line.clear();
 					double y_val = stod(y_string);
 
-					mGroundTruth.push_back(Point2f(x_val, -y_val));
+					double z_val = 0;
+					if (!line.empty())z_val = stod(line);
+
+					mGroundTruth.push_back(Point3f(x_val, -y_val, z_val));
 					mGroundTruthSize++;
 				}
 			}
@@ -76,27 +86,37 @@ public:
 	{
 		if (mGroundTruthSize == 0 || frameNum > mGroundTruthSize || frameNum < 1) return;
 
-		mResults.push_back(Point2f(-result.x, -result.y));
-		mLastError = Point3f(abs(result.x) - abs(mGroundTruth[frameNum - 1].x), abs(result.y) - abs(mGroundTruth[frameNum - 1].y), 0);
+		mResults.push_back(Point3f(-result.x, -result.y, -result.z));
+		mLastError = Point3f(abs(result.x) - abs(mGroundTruth[frameNum - 1].x), abs(result.y) - abs(mGroundTruth[frameNum - 1].y), abs(result.z) - abs(mGroundTruth[frameNum - 1].z));
 		mAvgError += mLastError;
 	}
 
 	Mat getPathImg() const
 	{
-		Rect rect = boundingRect(mGroundTruth) | boundingRect(mResults);
+		vector<Point2f> GroundPath, ResultPath;
+		for (int i = 0; i < mGroundTruth.size(); i++)
+		{
+			GroundPath.push_back(Point2f(mGroundTruth[i].x, mGroundTruth[i].y));
+		}
+		for (int i = 0; i < mResults.size(); i++)
+		{
+			ResultPath.push_back(Point2f(mResults[i].x, mResults[i].y));
+		}
+
+		Rect rect = boundingRect(GroundPath) | boundingRect(ResultPath);
 		Point2f tl = rect.tl();
 		Mat image = Mat::zeros(rect.size(), CV_8UC3);
 		resize(image, image, Size(), mScale, mScale, INTER_AREA);
 
-		for (int i = 0; i < mGroundTruth.size() - 1; i++)
+		for (int i = 0; i < GroundPath.size() - 1; i++)
 		{
 			//drawMarker(image, mScale * (mGroundTruth[i] - tl),  Scalar(0, 0, 255), MARKER_DIAMOND, 5);
-			line(image, mScale * (mGroundTruth[i] - tl), mScale * (mGroundTruth[i + 1] - tl), Scalar(0, 0, 255), mScale * 15);
+			line(image, mScale * (GroundPath[i] - tl), mScale * (GroundPath[i + 1] - tl), Scalar(0, 0, 255), mScale * 15);
 		}
-		for (int i = 0; i < mResults.size() - 1; i++)
+		for (int i = 0; i < ResultPath.size() - 1; i++)
 		{
 			//drawMarker(image, mScale * (mResults[i] - tl), Scalar(0, 255, 0), MARKER_DIAMOND, 5);
-			line(image, mScale * (mResults[i] - tl), mScale * (mResults[i + 1] - tl), Scalar(0, 255, 0), mScale * 5);
+			line(image, mScale * (ResultPath[i] - tl), mScale * (ResultPath[i + 1] - tl), Scalar(0, 255, 0), mScale * 5);
 		}
 
 		return image;

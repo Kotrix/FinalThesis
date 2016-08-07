@@ -14,6 +14,10 @@ Base class for area-based template matching methods
 */
 class MatchingMethod : public Method
 {
+private:
+	double mTemplRatio; /**< Ratio of template to image size */
+	double mMaxShift; /**< Max. shift between consecutive frames */
+
 	/**
 	Check settings and initialize matching method basing on the first frame from source 
 	@param first			first frame form the source
@@ -68,7 +72,7 @@ class MatchingMethod : public Method
 		CV_Assert(min > mSubPixelEstimator->getMargin() * 2);
 
 		//assure that maxShift is not more than limit
-		double maxShiftLimit = 0.25;
+		double maxShiftLimit = 0.3;
 		if (mMaxShift > maxShiftLimit)
 		{
 			cout << "Max. shift automatically limited to " << maxShiftLimit * 100 << "%\n";
@@ -94,9 +98,6 @@ class MatchingMethod : public Method
 			mTemplRatio = maxRatio;
 		}
 	}
-
-	double mTemplRatio; /**< Ratio of template to image size */
-	double mMaxShift; /**< Max. shift between consecutive frames */
 	
 protected:
 	Ptr<Metric> mMetric; /**< Object of metric to use */
@@ -109,10 +110,11 @@ protected:
 public:
 	explicit MatchingMethod(const String& name, const Mat& first, int metric, double tempRatio, double maxShift) : Method(name), mTemplRatio(tempRatio), mMaxShift(maxShift)
 	{
-		mMetric = MetricsFactory::getMetric(metric);
 		mSubPixelEstimator = SubPixelEstimatorsFactory::getEstimator(SubPixelEstimator::GAUSS5);
-		addToName("_" + mMetric->getName());
 		initMatching(first);
+		mMetric = MetricsFactory::getMetric(metric);
+		mMetric->reloadCache(mTemplate);
+		addToName("_" + mMetric->getName());
 	}
 
 	~MatchingMethod(){}

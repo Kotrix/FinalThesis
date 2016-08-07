@@ -22,6 +22,7 @@ public:
 
 		//copy frame to template
 		frame(mTemplateROI).copyTo(mTemplate);
+		mMetric->reloadCache(mTemplate);
 
 		return getBestLoc(result);
 	}

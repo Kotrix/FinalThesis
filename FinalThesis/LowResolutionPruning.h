@@ -112,6 +112,7 @@ public:
 		Full-search on the lowest level of pyramid
 		*/
 		updatePyramid(frame);
+		mMetric->reloadCache(mTemplates[mLayers]);
 		Mat result = mMetric->getMapSpatial(mPyramid[mLayers], mTemplates[mLayers]);
 		Point bestLoc = mMetric->findBestLoc(result);
 
@@ -136,6 +137,7 @@ public:
 			Point ROItl = bestLoc + ROIshift; //ROI top-left corner position for 3x3 search window
 
 			//search only in 3x3 search window around bestLoc
+			mMetric->reloadCache(mTemplates[i]);
 			result = mMetric->getMapSpatial(mPyramid[i](Rect(ROItl, mTemplates[i].size() + Size(2, 2))), mTemplates[i]);
 			tempBestLoc = mMetric->findBestLoc(result);
 			bestLoc += tempBestLoc + ROIshift;

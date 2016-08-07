@@ -4,8 +4,8 @@
 #include "MetricNSSD.h"
 #include "MetricXC.h"
 #include "MetricNXC.h"
-#include "MetricCC.h"
-#include "MetricNCC.h"
+#include "MetricZXC.h"
+#include "MetricZNXC.h"
 #include "MetricSAD.h"
 #include "MetricMAD.h"
 
@@ -25,8 +25,8 @@ public:
 	   case Metric::NSSD: return new MetricNSSD();
 	   case Metric::XC: return new MetricXC();
 	   case Metric::NXC: return new MetricNXC();
-	   case Metric::CC: return new MetricCC();
-	   case Metric::NCC: return new MetricNCC();
+	   case Metric::ZXC: return new MetricZXC();
+	   case Metric::ZNXC: return new MetricZNXC();
 	   case Metric::SAD: return new MetricSAD();
 	   case Metric::MAD: return new MetricMAD();
 	   default: return new MetricSSD();

@@ -38,11 +38,10 @@
     <ClInclude Include="FullSearchSpatial.h" />
     <ClInclude Include="LowResolutionPruning.h" />
     <ClInclude Include="MethodsFactory.h" />
-    <ClInclude Include="SpiralSearch.h" />
     <ClInclude Include="Method.h" />
-    <ClInclude Include="MetricCC.h" />
+    <ClInclude Include="MetricZXC.h" />
     <ClInclude Include="MetricMAD.h" />
-    <ClInclude Include="MetricNCC.h" />
+    <ClInclude Include="MetricZNXC.h" />
     <ClInclude Include="MetricNSSD.h" />
     <ClInclude Include="MetricNXC.h" />
     <ClInclude Include="MetricSAD.h" />

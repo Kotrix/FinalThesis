@@ -33,7 +33,7 @@ public:
 		{
 		case Method::FULL_FFT: return new FullSearchFFT(first, params.metric, params.templRatio, params.maxShift);
 		case Method::FULL_SPATIAL: return new FullSearchSpatial(first, params.metric, params.templRatio, params.maxShift);
-		case Method::LRP : return new LowResolutionPruning(first, params.metric, params.templRatio, params.maxShift, params.layers);
+		case Method::LRP : return new LowResolutionPruning(first, params.metric, params.templRatio, params.maxShift, params.layers, 2.0);
 		case Method::SPIRAL : return new ModifiedSpiralSearch(first, params.metric, params.templRatio, params.maxShift);
 		case Method::OPTICAL_FLOW : return new SparseOpticalFlow(first, params.detector, params.RANSAC, params.layers);
 		case Method::FEATURE_MATCHING : return new FeatureMatching(first, params.detector, params.matcher, params.RANSAC);

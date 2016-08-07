@@ -12,7 +12,7 @@ public:
 	@param temp			template
 	@return				similarity value
 	*/
-	double calculate(const Mat& img, const Mat& temp) const override{
+	float calculate(const Mat& img, const Mat& temp) override{
 		return norm(temp, img, NORM_L1);
 	}
 };

@@ -28,17 +28,17 @@ class ModifiedSpiralSearch : public MatchingMethod
 	*/
 	void setThresholds(int metric)
 	{
-		if (metric == Metric::CC)
+		if (metric == Metric::ZXC)
 		{
-			mPredThresh = mTemplateROI.area() * 500;
-			mPeakThresh = mTemplateROI.area() * 400;
+			mPredThresh = mTemplateROI.area() * 400;
+			mPeakThresh = mTemplateROI.area() * 300;
 		}
 		else if (metric == Metric::MAD)
 		{
 			mPredThresh = 16;
 			mPeakThresh = 13;
 		}
-		else if (metric == Metric::NCC)
+		else if (metric == Metric::ZNXC)
 		{
 			mPredThresh = 0.6;
 			mPeakThresh = 0.7;
@@ -65,8 +65,8 @@ class ModifiedSpiralSearch : public MatchingMethod
 		}
 		else if (metric == Metric::XC)
 		{
-			mPredThresh = mTemplateROI.area() * 1525;
-			mPeakThresh = mTemplateROI.area() * 1700;
+			mPredThresh = mTemplateROI.area() * 1500;
+			mPeakThresh = mTemplateROI.area() * 1325;
 		}
 	}
 
@@ -109,29 +109,29 @@ public:
 	*/
 	Point3f getDisplacement(const Mat& img) override
 	{
-		const Point ROItl = Point(mMaxTranslation);
+		const Point ROItl = mMaxTranslation;
 
 		//reset cache
 		mCache = Scalar(-1);
 
 		//init shift
-		Point shift(0);
+		Point shift(mPrediction);
 
 		//correlation value for predicted shift
 		float value = mCache.at<float>(ROItl + mPrediction) = mMetric->calculate(img(mTemplateROI + mPrediction), mTemplate);
 
 		//check if prediction is good enough to follow
-		if (mPrediction != shift)
-		{
-			if (mMetric->isBetter(value, mPredThresh)) //follow predicition
-			{
-				shift = mPrediction; 
-			}
-			else //start from the center
-			{
-				value = mCache.at<float>(ROItl + shift) = mMetric->calculate(img(mTemplateROI + shift), mTemplate);
-			}
-		}
+		//if (mPrediction != shift)
+		//{
+		//	if (mMetric->isBetter(value, mPredThresh)) //follow predicition
+		//	{
+		//		shift = mPrediction; 
+		//	}
+		//	else //start from the center
+		//	{
+		//		value = mCache.at<float>(ROItl + shift) = mMetric->calculate(img(mTemplateROI + shift), mTemplate);
+		//	}
+		//}
 
 		//main loop
 		int spiralLevel = 1; // actual spiral level
@@ -207,10 +207,16 @@ public:
 			}
 		}
 
-		if (mDrawResult) mCache.copyTo(mResultImg);
+		if (mDrawResult)
+		{
+			Mat temp;
+			normalize(mCache, temp, 0, 255, NORM_MINMAX);
+			temp.copyTo(mResultImg);
+		}
 
 		//update template
 		img(mTemplateROI).copyTo(mTemplate);
+		mMetric->reloadCache(mTemplate);
 
 		//check searching status
 		if (status != -1)

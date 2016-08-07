@@ -273,7 +273,16 @@ public:
 		else if (detector == "BRISK")
 			mDetector = BRISK::create(81);
 		else if (detector == "FAST")
-			mDetector = FastFeatureDetector::create(51);
+		{
+			cout << "Adjusting detector to image...";
+			for (int i = 10; i < 300; i++)
+			{
+				mPrevKeypoints.clear();
+				mDetector = FastFeatureDetector::create(i);
+				mDetector->detect(first, mPrevKeypoints, mDetectorMask);
+				if (mPrevKeypoints.size() < 200) break;
+			}
+		}
 		else if (detector == "GFTT")
 			mDetector = GFTTDetector::create(mPrevSize.area() / 1380, 0.001, mPrevSize.width / 32);
 		else if (detector == "ORB")
@@ -289,6 +298,8 @@ public:
 		rectangle(mDetectorMask, mPrevSize / 10, mPrevSize * 9 / 10, Scalar(255), CV_FILLED);
 
 		//detect keypoints in first image
+		mPrevKeypoints.clear();
 		mDetector->detect(first, mPrevKeypoints, mDetectorMask);
+		cout << "Number of features tracked: " << mPrevKeypoints.size() << endl;
 	}
 };
