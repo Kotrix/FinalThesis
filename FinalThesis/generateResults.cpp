@@ -643,7 +643,7 @@ int gen(int argc, char** argv)
 		{
 			if (j == Method::FULL_SPATIAL) continue;
 
-			LaserSpeckleVelocimeter LSV(path, j, params, px2mm, draw;
+			LaserSpeckleVelocimeter LSV(path, j, params, px2mm, draw);
 
 			Evaluator evaluator(path);
 
