@@ -17,16 +17,13 @@ class LowResolutionPruning : public MatchingMethod
 	*/
 	void updatePyramid(const Mat& img)
 	{
-		Mat searchROI = img(mSearchROI);
-		searchROI.copyTo(mPyramid[0]);
+		img(mSearchROI).copyTo(mPyramid[0]);
 
-		Mat lower;
 		for (int i = 1; i <= mLayers; i++)
 		{
 			//resize with interpolation to remove high freqs
 			double f = mPyrFactors[i];
-			resize(searchROI, lower, Size(), f, f);
-			lower.copyTo(mPyramid[i]);
+			resize(img(mSearchROI), mPyramid[i], Size(), f, f);
 		}
 	}
 
@@ -36,16 +33,13 @@ class LowResolutionPruning : public MatchingMethod
 	*/
 	void updateTemplates(const Mat& img)
 	{
-		Mat templROI = img(mTemplateROI);
-		templROI.copyTo(mTemplates[0]);
+		img(mTemplateROI).copyTo(mTemplates[0]);
 
-		Mat lower;
 		for (int i = 1; i <= mLayers; i++)
 		{
 			//resize with interpolation to remove high freqs
 			double f = mPyrFactors[i];
-			resize(templROI, lower, Size(), f, f);
-			lower.copyTo(mTemplates[i]);
+			resize(img(mTemplateROI), mTemplates[i], Size(), f, f);
 		}
 	}
 
@@ -78,7 +72,7 @@ public:
 		}
 
 		//check minimum difference between search and template
-		limitSize = 4.0;
+		limitSize = 2.0;
 		tempMin = tempMinDim * pyrFactor;
 		if (searchMinDim * pyrFactor < tempMin + limitSize)
 		{
@@ -161,22 +155,20 @@ public:
 			copyMakeBorder(result, result, top, bottom, left, right, BORDER_CONSTANT, Scalar(0));
 
 			//cache
-			Mat temp = mTemplates[0];
-			Mat img = mPyramid[0];
-			Size tempSize = temp.size();
+			Size tempSize = mTemplates[0].size();
 			Rect ROI = Rect(bestLoc, tempSize);
 			peakX += left;
 			peakY += top;
 
 			//calculate only necessary correlations
 			for (int i = 0; i < top; i++)
-				result.at<float>(i, peakX) = mMetric->calculate(img(ROI + Point(0, -peakY + i)), temp);
+				result.at<float>(i, peakX) = mMetric->calculate(mPyramid[0](ROI + Point(0, -peakY + i)), mTemplates[0]);
 			for (int i = 0; i < bottom; i++)
-				result.at<float>(result.rows - i - 1, peakX) = mMetric->calculate(img(ROI + Point(0, result.rows - 1 - peakY - i)), temp);
+				result.at<float>(result.rows - i - 1, peakX) = mMetric->calculate(mPyramid[0](ROI + Point(0, result.rows - 1 - peakY - i)), mTemplates[0]);
 			for (int i = 0; i < left; i++)
-				result.at<float>(peakY, i) = mMetric->calculate(img(ROI + Point(-peakX + i, 0)), temp);
+				result.at<float>(peakY, i) = mMetric->calculate(mPyramid[0](ROI + Point(-peakX + i, 0)), mTemplates[0]);
 			for (int i = 0; i < right; i++)
-				result.at<float>(peakY, result.cols - i - 1) = mMetric->calculate(img(ROI + Point(result.cols - 1 - peakX - i, 0)), temp);
+				result.at<float>(peakY, result.cols - i - 1) = mMetric->calculate(mPyramid[0](ROI + Point(result.cols - 1 - peakX - i, 0)), mTemplates[0]);
 		}
 
 		Point2f subPix = mSubPixelEstimator->estimate(result, Point(peakX, peakY));

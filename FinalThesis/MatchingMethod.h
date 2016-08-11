@@ -36,25 +36,25 @@ private:
 
 		//calculate ROI for template
 		double borderRatio = (1.0 - mTemplRatio) * 0.5;
-		Point tl = Point(floor(width * borderRatio), floor(height * borderRatio));
-		Point br = Point(ceil(width * (1.0 - borderRatio)), ceil(height * (1.0 - borderRatio)));
+		Point tl = Point(round(width * borderRatio), round(height * borderRatio));
+		Point br = Point(round(width * (1.0 - borderRatio)), round(height * (1.0 - borderRatio)));
 		mTemplateROI = Rect(tl, br);
 		cout << "Template area set to: " << mTemplateROI << endl;
 
 		//calculate ROI for search area
 		int margin = mSubPixelEstimator->getMargin();
 		borderRatio = borderRatio - mMaxShift;
-		tl = Point(floor(width * borderRatio), floor(height * borderRatio));
+		tl = Point(round(width * borderRatio), round(height * borderRatio));
 		if (tl.x < margin) tl.x = margin;
 		if (tl.y < margin) tl.y = margin;
-		br = Point(ceil(width * (1.0 - borderRatio)), ceil(height * (1.0 - borderRatio)));
+		br = Point(round(width * (1.0 - borderRatio)), round(height * (1.0 - borderRatio)));
 		if (br.x > width - margin) br.x = width - margin;
 		if (br.y > height - margin) br.y = height - margin;
 		mSearchROI = Rect(tl, br);
 		cout << "Search area set to: " << mSearchROI << endl;
 
 		//maximum translation of template
-		mMaxTranslation = mSearchROI.br() - mTemplateROI.br();
+		mMaxTranslation = mTemplateROI.tl() - mSearchROI.tl();
 
 		//initialize template
 		first(mTemplateROI).copyTo(mTemplate);
@@ -69,9 +69,9 @@ private:
 	{
 		//assure that maxShift is sufficient to compute sub-pixel estimation
 		double min = cv::min(mMaxShift*width, mMaxShift*height);
-		CV_Assert(min > mSubPixelEstimator->getMargin() * 2);
+		CV_Assert(min > mSubPixelEstimator->getMargin() + 1);
 
-		//assure that maxShift is not more than limit
+		//assure that maxShift is not higher than limit
 		double maxShiftLimit = 0.3;
 		if (mMaxShift > maxShiftLimit)
 		{
@@ -86,7 +86,7 @@ private:
 	void checkTemplateRatio()
 	{
 		//check ratio and optionally limit to minimum/maximum 
-		double minRatio = 0.1, maxRatio = 1.0 - 2 * mMaxShift;
+		double minRatio = 0.33, maxRatio = 1.0 - 2 * mMaxShift;
 		if (mTemplRatio < minRatio)
 		{
 			cout << "Too small template. Automatically increased to " << minRatio * 100 << "%\n";

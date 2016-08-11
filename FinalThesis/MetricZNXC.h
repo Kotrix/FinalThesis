@@ -13,7 +13,7 @@ public:
 
 	void reloadCache(const Mat& temp) override
 	{
-		temp.convertTo(mZeroMeanTemp, CV_8SC1);
+		temp.convertTo(mZeroMeanTemp, CV_32F);
 		mZeroMeanTemp = mZeroMeanTemp - mean(temp);
 		mTempDot = sqrt(mZeroMeanTemp.dot(mZeroMeanTemp));
 	}
@@ -25,9 +25,13 @@ public:
 	@return				similarity value
 	*/
 	float calculate(const Mat& img, const Mat& temp) override{
-		img.convertTo(mZeroMeanImg, CV_8SC1);
+		img.convertTo(mZeroMeanImg, CV_32F);
 		mZeroMeanImg = mZeroMeanImg - mean(img);
 
-		return mZeroMeanTemp.dot(mZeroMeanImg) / (mTempDot * sqrt(mZeroMeanImg.dot(mZeroMeanImg)));
+		//divison by 0 handling
+		double denom = mTempDot * sqrt(mZeroMeanImg.dot(mZeroMeanImg));
+		if (denom < DBL_EPSILON) return 0;
+
+		return mZeroMeanTemp.dot(mZeroMeanImg) / denom;
 	}
 };

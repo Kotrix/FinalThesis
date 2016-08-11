@@ -16,6 +16,7 @@ class Evaluator
 	int mScale;
 	Point3f mAvgError;
 	Point3f mLastError;
+	bool mStatus = false;
 
 public:
 	Evaluator() : mGroundTruth(), mResults(0), mGroundTruthSize(0), mScale(0), mAvgError(0), mLastError(0){}
@@ -70,6 +71,7 @@ public:
 
 					mGroundTruth.push_back(Point3f(x_val, -y_val, z_val));
 					mGroundTruthSize++;
+					mStatus = true;
 				}
 			}
 		}
@@ -90,6 +92,8 @@ public:
 		mLastError = Point3f(abs(result.x) - abs(mGroundTruth[frameNum - 1].x), abs(result.y) - abs(mGroundTruth[frameNum - 1].y), abs(result.z) - abs(mGroundTruth[frameNum - 1].z));
 		mAvgError += mLastError;
 	}
+
+	bool getStatus() const { return mStatus; }
 
 	Mat getPathImg() const
 	{

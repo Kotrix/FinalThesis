@@ -4,7 +4,7 @@
 class DissimilarityMetric : public Metric
 {
 public:
-	DissimilarityMetric(const String& name, int type) : Metric(name, type) {}
+	DissimilarityMetric(const String& name, int number) : Metric(name, number) {}
 
 	/**
 	Find the best match in the similarity map

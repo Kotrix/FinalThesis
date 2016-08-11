@@ -5,8 +5,11 @@
 class Metric
 {
 	String mName; /**< Metric name */
-	int mType; /**< Method number according to Metric::METRICS enum */
+	int mNumber; /**< Method number according to Metric::METRICS enum */
 	Mat mSimilarityMap; /**< Container for similarity map in memory (avoid reallocation) */
+
+protected:
+	bool mType = false; /**< Dissimilarity (0) or similarity (1) type */
 
 public:
 	/**
@@ -17,7 +20,7 @@ public:
 		SSD, NSSD, XC, NXC, ZXC, ZNXC, SAD, MAD
 	};
 
-	Metric(const String& name, int type) : mName(name), mType(type), mSimilarityMap() {}
+	Metric(const String& name, int number) : mName(name), mNumber(number), mSimilarityMap() {}
 	virtual ~Metric() {}
 
 	/**
@@ -81,7 +84,7 @@ public:
 	*/
 	Mat& getMapFreq(const Mat& img, const Mat& temp)
 	{
-		matchTemplate(img, temp, mSimilarityMap, mType);
+		matchTemplate(img, temp, mSimilarityMap, mNumber);
 		return mSimilarityMap;
 	}
 
@@ -93,5 +96,11 @@ public:
 	/**
 	Get metric number from METRICS enum
 	*/
-	int getType() const { return mType; }
+	int getNumber() const { return mNumber; }
+
+	/**
+	Get metric type
+	*/
+	bool getType() const { return mType; }
+
 };

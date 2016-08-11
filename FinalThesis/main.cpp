@@ -9,24 +9,25 @@ int main(int argc, char** argv)
 {
 	cout << "Speckle velocimetry - Krzysztof Kotowski\n";
 
-	int method = Method::FULL_SPATIAL;
+	int method = Method::FEATURE_MATCHING;
 	bool draw = false;
 	bool evaluate = true;
 	double px2mm = 1.0;
 
 	MethodParams params;
-	params.metric = Metric::ZNXC;
+	params.metric = Metric::NXC;
 	params.templRatio = 0.8;
 	params.maxShift = 0.1;
 	params.layers = 3;
-	params.detector = "FAST";
+	params.detector = "ORB";
+	params.maxFeatures = 200;
 	params.RANSAC = 1;
-	params.matcher = "FlannBased";
+	params.matcher = "BruteForce";
 
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen1_05\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen2_1\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen5_5\\*.png";
-	//String path = "C:\\Users\\Krzysztof\\Pictures\\realData\\real15mms\\*.png";
+	//String path = "C:\\Users\\Krzysztof\\Pictures\\realData\\real35mms\\*.png";
 	String path = "C:\\Users\\Krzysztof\\Pictures\\gen10_2\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen10_0\\*.png";
 	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen-40_0\\*.png";
@@ -64,6 +65,7 @@ int main(int argc, char** argv)
 
 	Evaluator evaluator;
 	if (evaluate) evaluator = Evaluator(path);
+	evaluate = evaluator.getStatus();
 
 	double sumTime = 0;
 	Point2f sumVelocity(0);
@@ -73,6 +75,7 @@ int main(int argc, char** argv)
 	cin.ignore();
 	waitKey();
 
+	double timeAccDelay = 5.0;
 	namedWindow("Frame", WINDOW_NORMAL);
 	if (draw) namedWindow("Method", WINDOW_NORMAL);
 	for (;;)
@@ -86,11 +89,12 @@ int main(int argc, char** argv)
 		auto time = LSV.getTime();
 
 		//accumulate results
-		if (frameNumber > 1)
+		if (frameNumber > timeAccDelay)
 		{
 			sumTime += time;
-			sumVelocity += V;
 		}
+		if (frameNumber > 1)
+			sumVelocity += V;
 
 		if (evaluate) evaluator.evaluate(displacement, frameNumber);
 
@@ -109,8 +113,8 @@ int main(int argc, char** argv)
 		if (waitKey(1) != -1) break;
 	}
 
-	sumVelocity /= (frameNumber - 1.0);
-	sumTime /= (frameNumber - 1.0);
+	sumVelocity /= (frameNumber - timeAccDelay);
+	sumTime /= (frameNumber - timeAccDelay);
 	cout << endl << "Average velocity: " << sumVelocity.x << " " << px_mm << "/s";
 	if (sumVelocity.y > 0) cout << "  |  " << sumVelocity.y << " deg/s";
 	cout << endl;
@@ -124,18 +128,18 @@ int main(int argc, char** argv)
 
 	ofstream result(groundPath + "res" + to_string(method) + to_string(params.metric) + to_string((int)(params.templRatio * 100)) + to_string(int(params.maxShift * 100)) + to_string(params.layers) + params.detector + to_string(params.RANSAC) + params.matcher + ".txt");
 
-	if (evaluate)
+	if (evaluator.getStatus())
 	{
 		auto r = evaluator.getAvgError();
 		cout << "Avg. error: " << evaluator.getAvgError() << endl;
 		cout << "Avg. error in pixels: " << sqrt(r.x*r.x + r.y*r.y) << endl;
-		cout << "Avg. time: " << 1000 * sumTime << " ms\n";
 		result << "Avg. error: " << evaluator.getAvgError() << endl;
 		result << "Avg. error in pixels: " << sqrt(r.x*r.x + r.y*r.y) << endl;
 		result << "Avg. time: " << 1000 * sumTime << " ms\n";
 		namedWindow("Error", WINDOW_NORMAL);
 		imshow("Error", evaluator.getPathImg());
 	}
+	cout << "Avg. time: " << 1000 * sumTime << " ms\n";
 	result.close();
 
 	waitKey();

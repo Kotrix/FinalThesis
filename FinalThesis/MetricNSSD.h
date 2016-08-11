@@ -16,7 +16,14 @@ public:
 	@return				similarity value
 	*/
 	float calculate(const Mat& img, const Mat& temp) override{
-		return norm(temp, img, NORM_L2SQR) / (sqrt(img.dot(img)) * mTempDot);
+		//divison by 0 handling
+		if (mTempDot < DBL_EPSILON) return sum(img)[0];
+		double denom = img.dot(img);
+		if (denom < DBL_EPSILON) return sum(temp)[0];
+		denom = sqrt(denom) * mTempDot;
+		if (denom < DBL_EPSILON) return 0;
+
+		return norm(temp, img, NORM_L2SQR) / denom;
 	}
 
 	void reloadCache(const Mat& temp) override{

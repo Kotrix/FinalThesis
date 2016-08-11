@@ -25,10 +25,6 @@ class SparseOpticalFlow : public FeaturesMethod
 		//start timer
 		double mTime = static_cast<double>(getTickCount());
 		mDetector->detect(img, keyPoints, mDetectorMask);
-		//stop timer
-		mTime = (static_cast<double>(getTickCount()) - mTime) / getTickFrequency();
-		sumDetectTime += mTime;
-		frames++;
 
 		//convert keyPoints to points
 		mPrevPoints2f.resize(keyPoints.size());
@@ -36,11 +32,17 @@ class SparseOpticalFlow : public FeaturesMethod
 			mPrevPoints2f[i] = keyPoints[i].pt;
 
 		//add subpixel accuracy if needed
-		if (mDetectorName == "GFTT")
+		if (mDetectorName == "GFTTsubpix")
 		{
 		cornerSubPix(img, mPrevPoints2f, Size(3, 3), Size(-1, -1),
 		TermCriteria(TermCriteria::MAX_ITER | TermCriteria::EPS, 30, 0.01));
 		}
+
+		//stop timer
+		mTime = (static_cast<double>(getTickCount()) - mTime) / getTickFrequency();
+		if (frames > 4)
+			sumDetectTime += mTime;
+		frames++;
 	}
 
 	/**
@@ -50,10 +52,18 @@ class SparseOpticalFlow : public FeaturesMethod
 	{
 		mPrevFrame.copyTo(mResultImg);
 		cvtColor(mResultImg, mResultImg, CV_GRAY2BGR);
-		for (int i = 0; i < mPrevPoints2f.size(); i++)
+		/*for (int i = 0; i < mPrevPoints2f.size(); i++)
 		{
 			circle(mResultImg, mPrevPoints2f[i], mPrevSize.width / 100, Scalar(0, 0, 255), 2);
+		}*/
+
+		if (mDetectorName == "GFTT" || mDetectorName == "Grid")
+		for (int i = 0; i < mPrevKeypoints.size(); i++)
+		{
+			mPrevKeypoints[i].size = mPrevSize.width / 50;
 		}
+
+		drawKeypoints(mResultImg, mPrevKeypoints, mResultImg, Scalar(0, 0, 255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
 	}
 
 	/**
@@ -75,8 +85,8 @@ class SparseOpticalFlow : public FeaturesMethod
 		vector<Point2f> pA(mPrevPoints2f), pB;
 
 		// find the corresponding points in B
-		calcOpticalFlowPyrLK(mPrevFrame, next_img, pA, pB, status, noArray(), mPrevSize / 19, mLayers,
-			TermCriteria(TermCriteria::MAX_ITER, 40, 0.01));
+		calcOpticalFlowPyrLK(mPrevFrame, next_img, pA, pB, status, noArray(), Size(27,27), mLayers,
+			TermCriteria(TermCriteria::MAX_ITER + TermCriteria::EPS, 30, 0.01));
 
 		// leave only points with optical flow status = true
 		int count = pA.size();
@@ -91,6 +101,7 @@ class SparseOpticalFlow : public FeaturesMethod
 				k++;
 			}
 		count = k;
+		result << count << endl;
 		pA.resize(count);
 		pB.resize(count);
 
@@ -108,12 +119,14 @@ class SparseOpticalFlow : public FeaturesMethod
 			M.at<double>(1, 2) /= mScale;
 		}
 
+		mPrevPoints2f = pB;
+
 		return M;
 	}
 
 
 public:
-	SparseOpticalFlow(const Mat& first, const String& detector, int estimation = 0, int layers = 4) : FeaturesMethod("OpticalFlow", first, detector, estimation), mLayers(layers)
+	SparseOpticalFlow(const Mat& first, const String& detector, int maxFeatures, int estimation = 0, int layers = 4) : FeaturesMethod("OpticalFlow", first, detector, maxFeatures, estimation), mLayers(layers), totalMotion(0)
 	{
 		result.open(detector + ".csv");
 
@@ -128,7 +141,7 @@ public:
 
 	~SparseOpticalFlow()
 	{
-		result << sumDetectTime / (frames - 1.0);
+		result << endl << sumDetectTime / (frames - 5.0);
 		result.close();
 	}
 
@@ -141,15 +154,23 @@ public:
 	{
 		Mat transform;
 
-		if (mEstimationType == 0 || mEstimationType == 1)
+		if (mEstimationType != 2)
 			transform = getTransform(img);
-		else if (mEstimationType == 2)
+		else
 			transform = estimateRigidTransform(mPrevFrame, img, false);
 
 		img.copyTo(mPrevFrame);
-		updateFeatures(mPrevFrame);
+		//don't detect new keypoints if motion is small and features are complete
+		double X = transform.at<double>(0, 2);
+		double Y = transform.at<double>(1, 2);
+		totalMotion += Point2f(X, Y);
+		if (sqrt(totalMotion.x*totalMotion.x + totalMotion.y*totalMotion.y) > 20 || mPrevPoints2f.size() < mMaxFeatures * 0.5)
+		{
+			updateFeatures(mPrevFrame);
+			totalMotion = Point2f(0);
+		}
 		if (mDrawResult) drawPoints();
 
-		return Point3f(transform.at<double>(0, 2), transform.at<double>(1, 2), asin(transform.at<double>(1, 0)) * 180 / CV_PI);
+		return Point3f(X, Y, asin(transform.at<double>(1, 0)) * 180 / CV_PI);
 	}
 };

@@ -110,13 +110,21 @@ class FeatureMatching : public FeaturesMethod
 	}
 
 public:
-	FeatureMatching(const Mat& first, const String& detector, const String& matcher, int estimation) : FeaturesMethod("FeatureMatching", first, detector, estimation)
+	FeatureMatching(const Mat& first, const String& detector, const String& matcher, int maxFeatures, int estimation) : FeaturesMethod("FeatureMatching", first, detector, maxFeatures, estimation)
 	{
-		mMatcherName = matcher;
-		addToName("_" + mMatcherName);
-		mMatcher = DescriptorMatcher::create(mMatcherName);
-
 		CV_Assert(mDetector->descriptorSize() > 0);
+
+		if (matcher == "FlannBased")
+		{
+			mMatcher = new FlannBasedMatcher();
+			mMatcherName = matcher;
+		}
+		else
+		{
+			mMatcher = new BFMatcher(mDetector->defaultNorm());
+			mMatcherName = "BruteForce";
+		}
+		addToName("_" + mMatcherName);
 
 		mDetector->compute(first, mPrevKeypoints, mPrevDescriptors);
 		if (mMatcherName == "FlannBased" && mPrevDescriptors.type() != CV_32F) {

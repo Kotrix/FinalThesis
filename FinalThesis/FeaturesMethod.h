@@ -58,6 +58,8 @@ protected:
 	bool mNeedScaling; /**< Flag controlling scaling */
 	int mEstimationType; /**< 0 - allPoints, 1 - RANSAC, 2 - original OpenCV function */
 	String mDetectorName;
+	int mMaxFeatures;
+	Point2f totalMotion;
 
 	/**
 	Find rigid transformation matrix for the next frame
@@ -189,8 +191,8 @@ protected:
 						double dbx2 = b[2].x - b[0].x, dby2 = b[2].y - b[0].y;
 						const double eps = 0.01;
 
-						if (fabs(dax1*day2 - day1*dax2) < eps*std::sqrt(dax1*dax1 + day1*day1)*std::sqrt(dax2*dax2 + day2*day2) ||
-							fabs(dbx1*dby2 - dby1*dbx2) < eps*std::sqrt(dbx1*dbx1 + dby1*dby1)*std::sqrt(dbx2*dbx2 + dby2*dby2))
+						if (fabs(dax1*day2 - day1*dax2) < eps*sqrt(dax1*dax1 + day1*day1)*sqrt(dax2*dax2 + day2*day2) ||
+							fabs(dbx1*dby2 - dby1*dbx2) < eps*sqrt(dbx1*dbx1 + dby1*dby1)*sqrt(dbx2*dbx2 + dby2*dby2))
 							continue;
 					}
 					break;
@@ -242,7 +244,7 @@ protected:
 	}
 
 public:
-	FeaturesMethod(const String& name, const Mat& first, const String& detector, int estimation) : Method(name), mEstimationType(estimation)
+	FeaturesMethod(const String& name, const Mat& first, const String& detector, int maxFeatures, int estimation) : Method(name), mEstimationType(estimation), mMaxFeatures(maxFeatures)
 	{
 		addToName("_" + detector);
 		if (estimation == 1) addToName("_RANSAC");
@@ -262,42 +264,65 @@ public:
 			resize(mPrevFrame, mPrevFrame, mPrevSize, 0., 0., INTER_AREA);
 		}
 
+		/*
+			INIT FEATURE DETECTOR
+		*/
 		mDetectorName = detector;
+		//define mask to omit features near border
+		const int borderDivider = 10;
+		mDetectorMask = Mat::zeros(mPrevSize, mPrevFrame.type());
+		Point maskTL(mPrevSize / borderDivider);
+		Point maskBR(mPrevSize * (borderDivider - 1) / borderDivider);
+		Rect ROI(maskTL, maskBR);
+		rectangle(mDetectorMask, ROI, Scalar(255), CV_FILLED);
+
 		//create features detector object pointer
 		if (detector == "Grid")
-			mDetector = makePtr<FeaturesGrid>(18);
-		else if (detector == "Agast")
-			mDetector = AgastFeatureDetector::create(49);
-		else if (detector == "AKAZE")
-			mDetector = AKAZE::create(5, 0, 3, 0.009);
-		else if (detector == "BRISK")
-			mDetector = BRISK::create(81);
-		else if (detector == "FAST")
 		{
-			cout << "Adjusting detector to image...";
-			for (int i = 10; i < 300; i++)
+			double featuresRatio = 1.0 / sqrt(ROI.area() / static_cast<double>(mMaxFeatures));
+			int ROIcountX = ROI.width * featuresRatio + 1;
+			mDetector = makePtr<FeaturesGrid>(round((mPrevSize.width * ROIcountX) / ROI.width));
+		}
+		else if (detector == "Agast" || detector == "BRISK")
+		{
+			cout << "Adjusting settings to the achieve desired number of features...";
+			for (int i = 1; i < 255; i++)
 			{
 				mPrevKeypoints.clear();
-				mDetector = FastFeatureDetector::create(i);
+				mDetector = AgastFeatureDetector::create(i, false);
 				mDetector->detect(first, mPrevKeypoints, mDetectorMask);
-				if (mPrevKeypoints.size() < 200) break;
+				if (mPrevKeypoints.size() <= mMaxFeatures)
+				{
+					if (detector == "BRISK") mDetector = BRISK::create(i, 0);
+					break;
+				}
 			}
 		}
-		else if (detector == "GFTT")
-			mDetector = GFTTDetector::create(mPrevSize.area() / 1380, 0.001, mPrevSize.width / 32);
+		else if (detector == "AKAZE")
+			mDetector = AKAZE::create(5, 0, 3, 0.009);
+		else if (detector == "FAST")
+		{
+			cout << "Adjusting settings to the achieve desired number of features...";
+			for (int i = 1; i < 255; i++)
+			{
+				mPrevKeypoints.clear();
+				mDetector = FastFeatureDetector::create(i, false);
+				mDetector->detect(first, mPrevKeypoints, mDetectorMask);
+				if (mPrevKeypoints.size() <= mMaxFeatures) break;
+			}
+		}
+		else if (detector == "GFTT" || detector == "GFTTsubpix")
+			mDetector = GFTTDetector::create(mMaxFeatures, 0.1, 1);
 		else if (detector == "ORB")
-			mDetector = ORB::create(mPrevSize.area() / 1380);
+			mDetector = ORB::create(mMaxFeatures, 1.2, 1, 0);
 		else if (detector == "SURF")
-			mDetector = xfeatures2d::SURF::create(3350);
+			mDetector = xfeatures2d::SURF::create(3350, 1, 1);
 		else if (detector == "SIFT")
 			mDetector = xfeatures2d::SIFT::create(mPrevSize.area() / 1024);
 		
 
-		//define mask to omit features near border
-		mDetectorMask = Mat::zeros(mPrevSize, mPrevFrame.type());
-		rectangle(mDetectorMask, mPrevSize / 10, mPrevSize * 9 / 10, Scalar(255), CV_FILLED);
-
 		//detect keypoints in first image
+		
 		mPrevKeypoints.clear();
 		mDetector->detect(first, mPrevKeypoints, mDetectorMask);
 		cout << "Number of features tracked: " << mPrevKeypoints.size() << endl;

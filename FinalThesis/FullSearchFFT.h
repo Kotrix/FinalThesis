@@ -3,7 +3,6 @@ Full search method
 */
 #pragma once
 #include "FullSearch.h"
-#include <opencv2/imgproc.hpp>
 
 class FullSearchFFT : public FullSearch
 {
@@ -25,9 +24,8 @@ public:
 
 		//copy frame to template
 		frame(mTemplateROI).copyTo(mTemplate);
+		mMetric->reloadCache(mTemplate);
 
-		Point3f r = getBestLoc(result);
-
-		return r;
+		return getBestLoc(result);
 	}
 };

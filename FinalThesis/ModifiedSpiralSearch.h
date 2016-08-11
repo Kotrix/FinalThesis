@@ -9,10 +9,12 @@ Spiral search with prediction
 
 class ModifiedSpiralSearch : public MatchingMethod
 {
-	Point mPrediction; /**< Previously calculated shift */
+	Point mGuess; /**< Previously calculated shift */
 	double mPredThresh; /**< Threshold to accept prediction */
 	double mPeakThresh; /**< Threshold to accept peak */
 	Mat mCache; /**< Container for correlation values */
+	int mCacheCols, mCacheRows;
+	Point mROItl;
 
 	//directions of template movement
 	const Point UP = Point(0, -1);
@@ -55,18 +57,18 @@ class ModifiedSpiralSearch : public MatchingMethod
 		}
 		else if (metric == Metric::SAD)
 		{
-			mPredThresh = mTemplateROI.area() * 16;
-			mPeakThresh = mTemplateROI.area() * 13;
+			mPredThresh = mTemplateROI.area() * 46;
+			mPeakThresh = mTemplateROI.area() * 38;
 		}
 		else if (metric == Metric::SSD)
 		{
-			mPredThresh = mTemplateROI.area() * 400;
-			mPeakThresh = mTemplateROI.area() * 300;
+			mPredThresh = mTemplateROI.area() * mTemplateROI.area() * 60 * 60;
+			mPeakThresh = mTemplateROI.area() * mTemplateROI.area() * 50 * 50;
 		}
 		else if (metric == Metric::XC)
 		{
-			mPredThresh = mTemplateROI.area() * 1500;
-			mPeakThresh = mTemplateROI.area() * 1325;
+			mPredThresh = mTemplateROI.area() * 1325;
+			mPeakThresh = mTemplateROI.area() * 1500;
 		}
 	}
 
@@ -77,6 +79,7 @@ class ModifiedSpiralSearch : public MatchingMethod
 	{
 		for (int i = 0; i < iters; i++)
 		{
+			shift += DIRECTIONS[*direction];
 			//change direction of search
 			if (++*countToLevel == *spiralLevel)
 			{
@@ -91,15 +94,19 @@ class ModifiedSpiralSearch : public MatchingMethod
 				}
 				*countToLevel = 0;
 			}
-			shift += DIRECTIONS[*direction];
 		}
 	}
 
 public:
-	explicit ModifiedSpiralSearch(const Mat& first, int metric, double templRatio = 0.5, double maxShift = 0.1) : MatchingMethod("SpiralSearch", first, metric, templRatio, maxShift), mPrediction(0)
+	explicit ModifiedSpiralSearch(const Mat& first, int metric, double templRatio = 0.5, double maxShift = 0.1) : MatchingMethod("SpiralSearch", first, metric, templRatio, maxShift), mGuess(0)
 	{
 		setThresholds(metric);
-		mCache = Mat(Size(mSearchROI.size() - mTemplateROI.size() + Size(1, 1)), CV_32F, Scalar(-1));
+		mCache = Mat(mSearchROI.size() - mTemplateROI.size() + Size(1, 1), CV_32F, Scalar(-FLT_MAX));
+
+		//leave limit for sub-pixel calculation
+		mCacheCols = mSearchROI.size().width - mTemplateROI.size().width + 1;
+		mCacheRows = mSearchROI.size().height - mTemplateROI.size().height + 1;
+		mROItl = mMaxTranslation + Point(1,1);
 	}
 
 	/**
@@ -109,29 +116,14 @@ public:
 	*/
 	Point3f getDisplacement(const Mat& img) override
 	{
-		const Point ROItl = mMaxTranslation;
-
 		//reset cache
-		mCache = Scalar(-1);
+		mCache = Scalar(-FLT_MAX);
 
-		//init shift
-		Point shift(mPrediction);
+		//next translation guessing
+		Point shift(mGuess);
 
 		//correlation value for predicted shift
-		float value = mCache.at<float>(ROItl + mPrediction) = mMetric->calculate(img(mTemplateROI + mPrediction), mTemplate);
-
-		//check if prediction is good enough to follow
-		//if (mPrediction != shift)
-		//{
-		//	if (mMetric->isBetter(value, mPredThresh)) //follow predicition
-		//	{
-		//		shift = mPrediction; 
-		//	}
-		//	else //start from the center
-		//	{
-		//		value = mCache.at<float>(ROItl + shift) = mMetric->calculate(img(mTemplateROI + shift), mTemplate);
-		//	}
-		//}
+		float value = mCache.at<float>(mROItl + shift) = mMetric->calculate(img(mTemplateROI + shift), mTemplate);
 
 		//main loop
 		int spiralLevel = 1; // actual spiral level
@@ -141,25 +133,28 @@ public:
 		int countToLevel = 0;
 
 		//1. default stop condition of the loop: spiralLevel too high
-		int maxSpiralLevel = max(mMaxTranslation.x + abs(shift.x), mMaxTranslation.y + abs(shift.y));
+		const int maxTL = 2 * max(mROItl.x + shift.x, mROItl.y + shift.y) - 1;
+		const int maxBR = 2 * max(mCacheCols - mROItl.x - shift.x, mCacheRows - mROItl.y - shift.y);
+		const int maxSpiralLevel = max(maxTL, maxBR);
 		//2. stop condition inside the loop: correlation peak found
 		do
 		{
 			if (!mMetric->isBetter(value, mPeakThresh)) //phase 1: spiral search for a peak neighbourhood
 			{
 				/*
-				MODIFICATION - skip computations using threshold
+				Reduction in search points based on similarity threshold
 				*/
 				int step = 2; //default step for moderate correlation
 				if (!mMetric->isBetter(value, mPredThresh)) step = 3; //larger step for poor correlation
 				iterateSpiral(shift, &countToLevel, &spiralLevel, &direction, &countToTwo, step);
 
 				//immediately skip loop iteration if shift not in the search ROI range
-				if (abs(shift.x) > mMaxTranslation.x || abs(shift.y) > mMaxTranslation.y)
+				const Point target = mROItl + shift;
+				if (target.x < 0 || target.y < 0 || target.x > mCacheCols - 1 || target.y > mCacheRows - 1)
 					continue;
 
 				//calculate correlation value for next shift
-				value = mCache.at<float>(ROItl + shift) = mMetric->calculate(img(mTemplateROI + shift), mTemplate);
+				value = mCache.at<float>(target) = mMetric->calculate(img(mTemplateROI + shift), mTemplate);
 			}
 			else //phase 2: detailed cross search for the actual peak
 			{
@@ -167,16 +162,19 @@ public:
 				status = -1;
 				for (int i = 0; i < 4; i++)
 				{
-					Point nextShift = shift + DIRECTIONS[i];
-
 					//immediately skip loop iteration if shift not in the search ROI range
-					if (abs(nextShift.x) > mMaxTranslation.x || abs(nextShift.y) > mMaxTranslation.y)
+					const Point nextShift = shift + DIRECTIONS[i];
+					const Point target = mROItl + nextShift;
+					if (target.x < 0 || target.y < 0 || target.x > mCacheCols - 1 || target.y > mCacheRows - 1)
+					{
+						status = -2;
 						continue;
+					}
 
 					//check if value for shift is in cache - shift in cache cannot be peak
-					if (mCache.at<float>(ROItl + nextShift) < 0)
+					if (mCache.at<float>(target) < -INT_MAX)
 					{
-						double corr = mCache.at<float>(ROItl + nextShift) = mMetric->calculate(img(mTemplateROI + nextShift), mTemplate);
+						double corr = mCache.at<float>(target) = mMetric->calculate(img(mTemplateROI + nextShift), mTemplate);
 						//change search status if actual value is not a peak
 						if (mMetric->isBetter(corr, value))
 						{
@@ -186,23 +184,39 @@ public:
 					}
 				}
 
-				//end loop if value is the heighest in the neighbourhood
-				if (status == -1) break;
+				/*
+				Early jump-out procedure
+				peak found if value is the heighest in the neighbourhood
+				*/
+				if (status < 0) break;
 
 				//shift to the highest neighbour
 				shift += DIRECTIONS[status];
 			}
 		} while (spiralLevel < maxSpiralLevel);
 
+		//check searching status
+		if (status != -1)
+		{
+			cout << "WARNING: Border of disparity map reached!" << endl;
+			return Point3f(mGuess);
+		}
+
 		//fill cache with values needed for sub-pixel estimation
-		if (mSubPixelEstimator->getMargin() > 1)
+		if (mSubPixelEstimator->getMargin() == 2)
 		{
 			for (int i = 0; i < 4; i++)
 			{
-				Point nextShift = shift + 2 * DIRECTIONS[i];
-				if (mCache.at<float>(ROItl + nextShift) < 0)
+				const Point nextShift = shift + 2 * DIRECTIONS[i];
+				const Point target = mROItl + nextShift;
+				if (target.x < 0 || target.y < 0 || target.x > mCacheCols - 1 || target.y > mCacheRows - 1)
 				{
-					mCache.at<float>(ROItl + nextShift) = mMetric->calculate(img(mTemplateROI + nextShift), mTemplate);
+					cout << "WARNING: Border of disparity map reached!" << endl;
+					return Point3f(mGuess);
+				}
+				if (mCache.at<float>(target) < -INT_MAX)
+				{
+					mCache.at<float>(target) = mMetric->calculate(img(mTemplateROI + nextShift), mTemplate);
 				}
 			}
 		}
@@ -210,7 +224,9 @@ public:
 		if (mDrawResult)
 		{
 			Mat temp;
+			mCache.forEach<float>([](float& p, const int* pos) -> void {if (p < -INT_MAX) p = -1; });
 			normalize(mCache, temp, 0, 255, NORM_MINMAX);
+			temp.convertTo(temp, CV_8UC1);
 			temp.copyTo(mResultImg);
 		}
 
@@ -218,18 +234,11 @@ public:
 		img(mTemplateROI).copyTo(mTemplate);
 		mMetric->reloadCache(mTemplate);
 
-		//check searching status
-		if (status != -1)
-		{
-			cout << "ERROR: Match hasn't been found" << endl;
-			return Point3f(0);
-		}
-
-		//update prediction
-		mPrediction = shift;
+		//update guessing
+		mGuess = shift;
 
 		//find sub-pixel accuracy
-		Point2f subPix = mSubPixelEstimator->estimate(mCache, ROItl + shift);
+		Point2f subPix = mSubPixelEstimator->estimate(mCache, mROItl + shift);
 
 		return Point3f(Point2f(shift) + subPix);
 	}

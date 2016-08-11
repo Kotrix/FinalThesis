@@ -13,6 +13,7 @@ struct MethodParams
 	double maxShift = 0.1; /**< Maximum expected image shift in the next frame */
 	int layers = 3; /**< Number of layers for low resolution pruning and optical flow */
 	String detector = "ORB"; /**< Name of the feature detector/descriptor */
+	int maxFeatures = 200;
 	int RANSAC = 1; /**< 0 - all points, 1 - RANSAC */
 	String matcher = "FlannBased"; /**< Name of the descriptor detector */
 };
@@ -35,8 +36,8 @@ public:
 		case Method::FULL_SPATIAL: return new FullSearchSpatial(first, params.metric, params.templRatio, params.maxShift);
 		case Method::LRP : return new LowResolutionPruning(first, params.metric, params.templRatio, params.maxShift, params.layers, 2.0);
 		case Method::SPIRAL : return new ModifiedSpiralSearch(first, params.metric, params.templRatio, params.maxShift);
-		case Method::OPTICAL_FLOW : return new SparseOpticalFlow(first, params.detector, params.RANSAC, params.layers);
-		case Method::FEATURE_MATCHING : return new FeatureMatching(first, params.detector, params.matcher, params.RANSAC);
+		case Method::OPTICAL_FLOW: return new SparseOpticalFlow(first, params.detector, params.maxFeatures, params.RANSAC, params.layers);
+		case Method::FEATURE_MATCHING : return new FeatureMatching(first, params.detector, params.matcher, params.maxFeatures, params.RANSAC);
 		default: return new FullSearchSpatial(first, params.metric, params.templRatio, params.maxShift);
 		}
 

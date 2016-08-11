@@ -9,8 +9,6 @@ private:
 public:
 	MetricNXC() : SimilarityMetric("NXC", NXC), mTempDot(-1) {}
 
-	void reloadCache(const Mat& temp) override { mTempDot = sqrt(temp.dot(temp)); }
-
 	/**
 	Calculate similarity value for two images of the same size
 	@param img			image
@@ -18,6 +16,13 @@ public:
 	@return				similarity value
 	*/
 	float calculate(const Mat& img, const Mat& temp) override{
-		return temp.dot(img) / (mTempDot * sqrt(img.dot(img)));
+		
+		//divison by 0 handling
+		double denom = sqrt(img.dot(img)) * mTempDot;
+		if (denom < DBL_EPSILON) return 0;
+
+		return temp.dot(img) / denom;
 	}
+
+	void reloadCache(const Mat& temp) override { mTempDot = sqrt(temp.dot(temp)); }
 };
