@@ -54,12 +54,10 @@ protected:
 	Ptr<Feature2D> mDetector; /**< Pointer to detector/descriptor object */
 	vector<KeyPoint> mPrevKeypoints; /**< Previously detected keypoints */
 	Mat mDetectorMask; /**< Mask for features detection */
-	double mScale; /**< Scaling factor for smaller images */
-	bool mNeedScaling; /**< Flag controlling scaling */
 	int mEstimationType; /**< 0 - allPoints, 1 - RANSAC, 2 - original OpenCV function */
 	String mDetectorName;
 	int mMaxFeatures;
-	Point2f totalMotion;
+	Point2f mTotalMotion;
 
 	/**
 	Find rigid transformation matrix for the next frame
@@ -156,10 +154,10 @@ protected:
 			{
 				for (k1 = 0; k1 < RANSAC_MAX_ITERS; k1++)
 				{
-					//draw point from feature set
+					//draw index from feature set
 					idx[i] = rng.uniform(0, count);
 
-					//repeat if the same point (or very close one) has been drawn
+					//repeat if the same index has been drawn or points behind indexes are too close
 					for (j = 0; j < i; j++)
 					{
 						if (idx[j] == idx[i])
@@ -244,25 +242,13 @@ protected:
 	}
 
 public:
-	FeaturesMethod(const String& name, const Mat& first, const String& detector, int maxFeatures, int estimation) : Method(name), mEstimationType(estimation), mMaxFeatures(maxFeatures)
+	FeaturesMethod(const String& name, const Mat& first, const String& detector, int maxFeatures, int estimation) : Method(name), mEstimationType(estimation), mMaxFeatures(maxFeatures), mTotalMotion(0)
 	{
 		addToName("_" + detector);
 		if (estimation == 1) addToName("_RANSAC");
 
 		first.copyTo(mPrevFrame);
 		mPrevSize = first.size();
-
-		//check if image need scaling
-		Size minSize(160, 160);
-		mScale = max(1.0, max(static_cast<double>(minSize.width) / mPrevSize.width, static_cast<double>(minSize.height) / mPrevSize.height));
-		minSize.width = cvRound(mPrevSize.width * mScale);
-		minSize.height = cvRound(mPrevSize.height * mScale);
-		mNeedScaling = minSize.width != mPrevSize.width || minSize.height != mPrevSize.height;
-		if (mNeedScaling)
-		{
-			mPrevSize = minSize;
-			resize(mPrevFrame, mPrevFrame, mPrevSize, 0., 0., INTER_AREA);
-		}
 
 		/*
 			INIT FEATURE DETECTOR
@@ -283,7 +269,7 @@ public:
 			int ROIcountX = ROI.width * featuresRatio + 1;
 			mDetector = makePtr<FeaturesGrid>(round((mPrevSize.width * ROIcountX) / ROI.width));
 		}
-		else if (detector == "Agast" || detector == "BRISK")
+		else if (detector == "Agast" || detector == "AGAST")
 		{
 			cout << "Adjusting settings to the achieve desired number of features...";
 			for (int i = 1; i < 255; i++)
@@ -291,18 +277,35 @@ public:
 				mPrevKeypoints.clear();
 				mDetector = AgastFeatureDetector::create(i, false);
 				mDetector->detect(first, mPrevKeypoints, mDetectorMask);
-				if (mPrevKeypoints.size() <= mMaxFeatures)
-				{
-					if (detector == "BRISK") mDetector = BRISK::create(i, 0);
-					break;
-				}
+				if (mPrevKeypoints.size() <= mMaxFeatures) break;
 			}
 		}
-		else if (detector == "AKAZE")
-			mDetector = AKAZE::create(5, 0, 3, 0.009);
-		else if (detector == "FAST")
+		else if (detector == "sAgast" || detector == "sAGAST")
 		{
 			cout << "Adjusting settings to the achieve desired number of features...";
+			for (int i = 1; i < 255; i++)
+			{
+				mPrevKeypoints.clear();
+				mDetector = AgastFeatureDetector::create(i, true);
+				mDetector->detect(first, mPrevKeypoints, mDetectorMask);
+				if (mPrevKeypoints.size() <= mMaxFeatures) break;
+			}
+		}
+		else if (detector == "BRISK")
+		{
+			cout << "Adjusting settings to the achieve desired number of features...";
+			for (int i = 36; i < 255; i+=1)
+			{
+				mPrevKeypoints.clear();
+				mDetector = BRISK::create(i, 0);
+				mDetector->detect(first, mPrevKeypoints, mDetectorMask);
+				//cout << i << "," << mPrevKeypoints.size() << endl;
+				if (mPrevKeypoints.size() <= mMaxFeatures) break;
+			}
+		}
+		else if (detector == "FAST")
+		{
+			cout << "Adjusting settings to the achieve desired number of features...\n";
 			for (int i = 1; i < 255; i++)
 			{
 				mPrevKeypoints.clear();
@@ -311,20 +314,71 @@ public:
 				if (mPrevKeypoints.size() <= mMaxFeatures) break;
 			}
 		}
-		else if (detector == "GFTT" || detector == "GFTTsubpix")
-			mDetector = GFTTDetector::create(mMaxFeatures, 0.1, 1);
+		else if (detector == "sFAST")
+		{
+			cout << "Adjusting settings to achieve desired number of features...\n";
+			for (int i = 1; i < 255; i++)
+			{
+				mPrevKeypoints.clear();
+				mDetector = FastFeatureDetector::create(i, true);
+				mDetector->detect(first, mPrevKeypoints, mDetectorMask);
+				if (mPrevKeypoints.size() <= mMaxFeatures) break;
+			}
+		}
+		else if (detector == "GFTT")
+			mDetector = GFTTDetector::create(mMaxFeatures, 0.01, 1);
+		else if (detector == "Harris")
+			mDetector = GFTTDetector::create(mMaxFeatures, 0.01, 1, 3, true);
 		else if (detector == "ORB")
 			mDetector = ORB::create(mMaxFeatures, 1.2, 1, 0);
 		else if (detector == "SURF")
-			mDetector = xfeatures2d::SURF::create(3350, 1, 1);
+		{
+			cout << "Adjusting settings to achieve desired number of features...\n";
+			int step = 10;
+			for (int i = 300; i < 50000; i+=step)
+			{
+				mPrevKeypoints.clear();
+				mDetector = xfeatures2d::SURF::create(i, 1, 3);
+				mDetector->detect(first, mPrevKeypoints, mDetectorMask);
+				//cout << i << "," << mPrevKeypoints.size() << endl;
+				if (mPrevKeypoints.size() < 180) step = 15;
+				if (mPrevKeypoints.size() < 130) step = 25;
+				if (mPrevKeypoints.size() <= mMaxFeatures) break;
+			}
+		}
+		else if (detector == "U-SURF")
+		{
+			cout << "Adjusting settings to achieve desired number of features...\n";
+			int step = 10;
+			for (int i = 300; i < 50000; i += step)
+			{
+				mPrevKeypoints.clear();
+				mDetector = xfeatures2d::SURF::create(i, 1, 3, false, true);
+				mDetector->detect(first, mPrevKeypoints, mDetectorMask);
+				//cout << i << "," << mPrevKeypoints.size() << endl;
+				if (mPrevKeypoints.size() < 180) step = 15;
+				if (mPrevKeypoints.size() < 130) step = 25;
+				if (mPrevKeypoints.size() <= mMaxFeatures) break;
+			}
+		}
 		else if (detector == "SIFT")
-			mDetector = xfeatures2d::SIFT::create(mPrevSize.area() / 1024);
+		{
+			cout << "Adjusting settings to achieve desired number of features...\n";
+			for (int i = mMaxFeatures; i < mMaxFeatures * 10; i++)
+			{
+				mPrevKeypoints.clear();
+				mDetector = xfeatures2d::SIFT::create(i, 2, 0.01, 10, 1.2);
+				mDetector->detect(first, mPrevKeypoints, mDetectorMask);
+				if (mPrevKeypoints.size() >= mMaxFeatures) break;
+			}
+		}
 		
 
 		//detect keypoints in first image
 		
 		mPrevKeypoints.clear();
 		mDetector->detect(first, mPrevKeypoints, mDetectorMask);
+		mMaxFeatures = mPrevKeypoints.size();
 		cout << "Number of features tracked: " << mPrevKeypoints.size() << endl;
 	}
 };

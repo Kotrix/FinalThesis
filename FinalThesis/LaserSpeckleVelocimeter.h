@@ -81,6 +81,8 @@ public:
 	*/
 	uint64 getFrameNumber() const { return mFrameNumber; }
 
+	int getFeatures() const { return mMethod->getFeatures(); }
+
 	/**
 	Main method of the project. It activates complete process of measuring translation with given method in the next frame.
 	The actual frame can be accessed by argument (otherwise put noArray()) 
@@ -101,7 +103,7 @@ public:
 		Point3f measurement = mMethod->getDisplacement(frame);
 
 		//increase total displacement
-		mDisplacement += Point3f(measurement.x * PX2MM, measurement.y * PX2MM, measurement.z);
+		mDisplacement = Point3f(measurement.x * PX2MM, measurement.y * PX2MM, measurement.z);
 
 		//stop timer
 		mTime = (static_cast<double>(getTickCount()) - mTime) / getTickFrequency();

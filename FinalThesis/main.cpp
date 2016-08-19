@@ -9,8 +9,8 @@ int main(int argc, char** argv)
 {
 	cout << "Speckle velocimetry - Krzysztof Kotowski\n";
 
-	int method = Method::FEATURE_MATCHING;
-	bool draw = false;
+	int method = Method::FULL_FFT;
+	bool draw = true;
 	bool evaluate = true;
 	double px2mm = 1.0;
 
@@ -19,26 +19,19 @@ int main(int argc, char** argv)
 	params.templRatio = 0.8;
 	params.maxShift = 0.1;
 	params.layers = 3;
-	params.detector = "ORB";
+	params.detector = "BRISK";
 	params.maxFeatures = 200;
 	params.RANSAC = 1;
 	params.matcher = "BruteForce";
 
-	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen1_05\\*.png";
-	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen2_1\\*.png";
-	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen5_5\\*.png";
-	//String path = "C:\\Users\\Krzysztof\\Pictures\\realData\\real35mms\\*.png";
-	String path = "C:\\Users\\Krzysztof\\Pictures\\gen10_2\\*.png";
-	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen10_0\\*.png";
-	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen-40_0\\*.png";
-	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen40_3\\*.png";
-	//String path = "0";
+	//String path = "C:\\Users\\Krzysztof\\Pictures\\gen10_2\\*.png";
+	String path = "0";
 
 	/**
 	* CHECK ARGUMENTS
 	*
 	*/
-	if (argc < 11)
+	if (argc < 12)
 	{
 		cout << "Usage : %s <source> <method> (<metric> <templRatio> <maxShift> <layers> <detector> <RANSAC> <matcher> <draw> <px2mm>)\n", argv[0];
 	}
@@ -50,10 +43,11 @@ int main(int argc, char** argv)
 	if (argc > 5) params.maxShift = stod(argv[5]);
 	if (argc > 6) params.layers = stoi(argv[6]);
 	if (argc > 7) params.detector = argv[7];
-	if (argc > 8) params.RANSAC = stoi(argv[8]);
-	if (argc > 9) params.matcher = argv[9];
-	if (argc > 10) draw = stoi(argv[10]);
-	if (argc > 11) px2mm = stod(argv[11]);
+	if (argc > 8) params.maxFeatures = stoi(argv[8]);
+	if (argc > 9) params.RANSAC = stoi(argv[9]);
+	if (argc > 10) params.matcher = argv[10];
+	if (argc > 11) draw = stoi(argv[11]);
+	if (argc > 12) px2mm = stod(argv[12]);
 	String px_mm = "px";
 	if (px2mm > 1.0 + DBL_EPSILON && px2mm < 1.0 - DBL_EPSILON)
 		px_mm = "mm";
@@ -77,7 +71,7 @@ int main(int argc, char** argv)
 
 	double timeAccDelay = 5.0;
 	namedWindow("Frame", WINDOW_NORMAL);
-	if (draw) namedWindow("Method", WINDOW_NORMAL);
+
 	for (;;)
 	{
 		Mat frame;
@@ -104,12 +98,13 @@ int main(int argc, char** argv)
 		if (V.y > 0) cout << "Rotation: " << displacement.z << " deg  |  Velocity: " << V.y << " deg/s\n";
 		cout << endl;
 
-		imshow("Frame", frame);
 		if (draw)
 		{
-			imshow("Method", LSV.getResultImg());
-			waitKey();
+			imshow("Frame", LSV.getResultImg());
 		}
+		else
+			imshow("Frame", frame);
+
 		if (waitKey(1) != -1) break;
 	}
 

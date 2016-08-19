@@ -13,7 +13,7 @@ public:
 	@return				similarity value
 	*/
 	float calculate(const Mat& img, const Mat& temp) override{
-		return norm(temp, img, NORM_L2SQR);
+		return cv::norm(temp, img, NORM_L2SQR);
 	}
 
 };

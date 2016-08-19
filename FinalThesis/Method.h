@@ -60,4 +60,6 @@ public:
 	@return				displacement with respect to previous frame
 	*/
 	virtual Point3f getDisplacement(const Mat& img) = 0;
+
+	virtual int getFeatures() {return 0;} 
 };

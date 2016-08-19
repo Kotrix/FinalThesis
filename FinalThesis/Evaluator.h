@@ -69,7 +69,8 @@ public:
 					double z_val = 0;
 					if (!line.empty())z_val = stod(line);
 
-					mGroundTruth.push_back(Point3f(x_val, -y_val, z_val));
+					//y axis is inverted in OpenCV
+					mGroundTruth.push_back(Point3f(x_val, y_val, z_val));
 					mGroundTruthSize++;
 					mStatus = true;
 				}
@@ -88,8 +89,15 @@ public:
 	{
 		if (mGroundTruthSize == 0 || frameNum > mGroundTruthSize || frameNum < 1) return;
 
-		mResults.push_back(Point3f(-result.x, -result.y, -result.z));
-		mLastError = Point3f(abs(result.x) - abs(mGroundTruth[frameNum - 1].x), abs(result.y) - abs(mGroundTruth[frameNum - 1].y), abs(result.z) - abs(mGroundTruth[frameNum - 1].z));
+		Point3f correction(0);
+		if (frameNum > 1) correction = mGroundTruth[frameNum - 2];
+
+		Point3f invResult = Point3f(-result.x, result.y, -result.z);
+		mResults.push_back(invResult);
+		float x_err = abs(invResult.x - (mGroundTruth[frameNum - 1].x - correction.x));
+		float y_err = abs(invResult.y - (mGroundTruth[frameNum - 1].y - correction.y));
+		float deg_err = abs(invResult.z - (mGroundTruth[frameNum - 1].z - correction.z));
+		mLastError = Point3f(x_err, y_err, deg_err);
 		mAvgError += mLastError;
 	}
 
@@ -134,6 +142,19 @@ public:
 	Point3f getAvgError() const
 	{
 		return mAvgError / mGroundTruthSize;
+	}
+
+	double getMeanMotion() const
+	{
+		double mean = 0;
+		for (int i = 1; i < mGroundTruthSize; i++)
+		{
+			Point3f p = mGroundTruth[i] - mGroundTruth[i - 1];
+			mean += sqrt(p.x*p.x + p.y*p.y);
+		}
+		mean /= static_cast<double>(mGroundTruthSize - 1);
+
+		return mean;
 	}
 
 };

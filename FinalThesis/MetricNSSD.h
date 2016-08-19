@@ -17,13 +17,14 @@ public:
 	*/
 	float calculate(const Mat& img, const Mat& temp) override{
 		//divison by 0 handling
-		if (mTempDot < DBL_EPSILON) return sum(img)[0];
-		double denom = img.dot(img);
-		if (denom < DBL_EPSILON) return sum(temp)[0];
-		denom = sqrt(denom) * mTempDot;
-		if (denom < DBL_EPSILON) return 0;
+		double denom = sqrt(img.dot(img));
+		if (mTempDot <= FLT_EPSILON || denom <= FLT_EPSILON)
+		{
+			if (denom > FLT_EPSILON || mTempDot > FLT_EPSILON) return 1;
+			return 0;
+		}
 
-		return norm(temp, img, NORM_L2SQR) / denom;
+		return norm(temp, img, NORM_L2SQR) / (denom * mTempDot);
 	}
 
 	void reloadCache(const Mat& temp) override{

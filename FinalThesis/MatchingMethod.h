@@ -72,7 +72,7 @@ private:
 		CV_Assert(min > mSubPixelEstimator->getMargin() + 1);
 
 		//assure that maxShift is not higher than limit
-		double maxShiftLimit = 0.3;
+		double maxShiftLimit = 0.48;
 		if (mMaxShift > maxShiftLimit)
 		{
 			cout << "Max. shift automatically limited to " << maxShiftLimit * 100 << "%\n";
@@ -86,7 +86,7 @@ private:
 	void checkTemplateRatio()
 	{
 		//check ratio and optionally limit to minimum/maximum 
-		double minRatio = 0.33, maxRatio = 1.0 - 2 * mMaxShift;
+		double minRatio = 0.01, maxRatio = 1.0 - 2 * mMaxShift;
 		if (mTemplRatio < minRatio)
 		{
 			cout << "Too small template. Automatically increased to " << minRatio * 100 << "%\n";

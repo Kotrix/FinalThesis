@@ -31,6 +31,8 @@ protected:
 		//shift to get proper translation
 		bestLoc += mSearchROI.tl() - mTemplateROI.tl();
 
+		auto f = Point3f(Point2f(bestLoc) + subPix);
+
 		return Point3f(Point2f(bestLoc) + subPix);
 	}
 
